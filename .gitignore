@@ -5,3 +5,5 @@
 .profile
 .ssh/
 .vscode-server/
+.git-credentials
+.python_history
