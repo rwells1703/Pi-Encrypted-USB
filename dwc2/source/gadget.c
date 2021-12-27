@@ -1959,7 +1959,6 @@ static void dwc2_hsotg_process_control(struct dwc2_hsotg *hsotg,
 			dwc2_writel(hsotg, dcfg, DCFG);
 
 			dev_info(hsotg->dev, "new address %d\n", ctrl->wValue);
-			dev_info(hsotg->dev, "BEWARE THERE IS AN ELEPHANT ON THE LOOSE\n");
 
 			ret = dwc2_hsotg_send_reply(hsotg, ep0, NULL, 0);
 			return;
@@ -3817,6 +3816,7 @@ irq_retry:
 
 	if (gintsts & GINTSTS_ERLYSUSP) {
 		dev_dbg(hsotg->dev, "GINTSTS_ErlySusp\n");
+		dev_info(hsotg->dev, "USB DEVICE HAS BEEN EJECTED\n");
 		dwc2_writel(hsotg, GINTSTS_ERLYSUSP, GINTSTS);
 	}
 
