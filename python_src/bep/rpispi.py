@@ -22,7 +22,7 @@ import logging
 import spidev
 import RPi.GPIO as GPIO
 
-HOST_IRQ_PIN = 17
+HOST_IRQ_PIN = 4
 
 
 class Rpispi(object):
