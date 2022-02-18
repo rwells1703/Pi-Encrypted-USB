@@ -26,7 +26,6 @@ from bep.bep_extended import BepExtended
 from bep.bep_log import BepLogging, BepLoggingError
 from bep.com_phy import ComPhy
 
-
 def get_args():
     """Parses args from terminal"""
 
