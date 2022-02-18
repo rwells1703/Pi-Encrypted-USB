@@ -1084,11 +1084,16 @@ static void dwc2_hsotg_start_req(struct dwc2_hsotg *hsotg,
 		__func__, dwc2_readl(hsotg, epctrl_reg), index,
 		hs_ep->dir_in ? "in" : "out");
 
+	//dev_info(hsotg->dev, "%d", dwc2_readl(hsotg, epctrl_reg));
+	if (dwc2_readl(hsotg, epctrl_reg) == 163840) {
+		dev_info(hsotg->dev, "USB DEVICE HAS BEEN EJECTED");
+	}
+
 	/* If endpoint is stalled, we will restart request later */
 	ctrl = dwc2_readl(hsotg, epctrl_reg);
 
 	if (index && ctrl & DXEPCTL_STALL) {
-		dev_warn(hsotg->dev, "%s: ep%d is stalled\n", __func__, index);
+		//dev_warn(hsotg->dev, "%s: ep%d is stalled\n", __func__, index);
 		return;
 	}
 
@@ -3816,7 +3821,6 @@ irq_retry:
 
 	if (gintsts & GINTSTS_ERLYSUSP) {
 		dev_dbg(hsotg->dev, "GINTSTS_ErlySusp\n");
-		dev_info(hsotg->dev, "USB DEVICE HAS BEEN EJECTED\n");
 		dwc2_writel(hsotg, GINTSTS_ERLYSUSP, GINTSTS);
 	}
 
@@ -4358,7 +4362,7 @@ static int dwc2_hsotg_ep_sethalt(struct usb_ep *ep, int value, bool now)
 	u32 epctl;
 	u32 xfertype;
 
-	dev_info(hs->dev, "%s(ep %p %s, %d)\n", __func__, ep, ep->name, value);
+	//dev_info(hs->dev, "%s(ep %p %s, %d)\n", __func__, ep, ep->name, value);
 
 	if (index == 0) {
 		if (value)
