@@ -23,7 +23,7 @@ mkdir -p configs/c.1/strings/0x409
 echo 250 > configs/c.1/MaxPower
 
 # Specify which disk image to use for mass storage
-FILE=/home/pi/storage/images/help.img
+FILE=/home/pi/piusb/storage/images/help.img
 
 # Set gadget options
 mkdir -p functions/mass_storage.usb0
