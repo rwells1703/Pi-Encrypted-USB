@@ -3,4 +3,4 @@
 	url = https://github.com/WiringPi/WiringPi
 [submodule "pn532-lib"]
 	path = pn532-lib
-	url = https://github.com/soonuse/pn532-lib
+	url = https://github.com/rwells1703/pn532-lib
