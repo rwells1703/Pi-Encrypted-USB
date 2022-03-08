@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd /home/pi/piusb/storage
+
+gpg -o images/fs.img.gpg --symmetric --batch --yes --passphrase $1 --cipher-algo AES256 ramdisk/fs.img
