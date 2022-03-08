@@ -1,6 +1,8 @@
-[submodule "WiringPi"]
+[submodule "rfid/WiringPi"]
 	path = rfid/WiringPi
 	url = https://github.com/WiringPi/WiringPi
-[submodule "pn532-lib"]
+	ignore = untracked
+[submodule "rfid/pn532-lib"]
 	path = rfid/pn532-lib
-	url = https://github.com/rwells1703/pn532-lib
+	url = https://github.com/soonuse/pn532-lib
+	ignore = untracked
