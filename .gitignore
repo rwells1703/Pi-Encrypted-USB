@@ -1,2 +1,4 @@
-images/*
-ramdisk/*
+storage/images/*
+storage/ramdisk/*
+rfid/**/*.out
+rfid/venv
