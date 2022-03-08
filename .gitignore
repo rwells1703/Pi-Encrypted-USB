@@ -2,3 +2,7 @@ storage/images/*
 storage/ramdisk/*
 rfid/**/*.out
 rfid/venv
+example/bep/__pycache__/
+src/bep/__pycache__/
+*.log
+venv
