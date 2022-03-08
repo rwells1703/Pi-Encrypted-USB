@@ -1,0 +1,2 @@
+sudo rmmod dwc2
+sudo modprobe dwc2

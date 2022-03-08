@@ -1,0 +1,24 @@
+#!/bin/bash
+
+cd /sys/kernel/config/usb_gadget/
+
+cd piusb
+
+# Remove the function from configuration
+rm configs/c.1/mass_storage.usb0
+
+# Remove strings from configuration
+rmdir configs/c.1/strings/0x409/
+
+# And finally remove the rest of the configuration
+rmdir configs/c.1/
+
+# Remove the function
+rmdir functions/mass_storage.usb0
+
+# Remove strings
+rmdir strings/0x409/
+
+# Finally, remove the entire gadget
+cd ..
+rmdir piusb

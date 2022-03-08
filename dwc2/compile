@@ -1,0 +1,4 @@
+FOLDER=/lib/modules/5.10.63-v7+/kernel/drivers/usb/dwc2
+sudo cp -r -u source/* $FOLDER
+cd $FOLDER
+sudo make -C /lib/modules/`uname -r`/build M=$PWD -j4
