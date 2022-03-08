@@ -32,95 +32,97 @@ def startup():
 
     mount_help_drive()
 
-    read_card_passcode()
+    wait_for_card()
     led_flicker()
     time.sleep(1)
 
     eject_help_drive()
-
+    print()
 
     mount_main_drive()
 
-    read_card_passcode()
+    wait_for_card()
     led_flicker()
     time.sleep(1)
 
     eject_main_drive()
 
-    '''while True:
+    print("END")
+
+    while True:
         led_on()
         time.sleep(0.5)
         led_off()
-        time.sleep(0.5)'''
+        time.sleep(0.5)
 
-    execute_command(["poweroff"])
+    #execute_command(["poweroff"])
 
 def mount_help_drive():
     create_usb_gadget_help()
-    print("HELP DRIVE MOUNTED")
+    print("HELP drive mounted")
 
 def eject_help_drive():
-    remove_usb_gadget()
-    print("HELP DRIVE EJECTED")
+    remove_usb_gadget("HELP")
+    print("HELP drive ejected")
 
 def mount_main_drive():
     mount_tmpfs()
     decrypt()
     create_usb_gadget_main()
-    print("MAIN DRIVE MOUNTED")
+    print("MAIN drive mounted")
 
 def eject_main_drive():
-    remove_usb_gadget()
+    remove_usb_gadget("MAIN")
     encrypt()
     unmount_tmpfs()
-    print("MAIN DRIVE EJECTED")
+    print("MAIN drive ejected")
 
 
 def mount_tmpfs():
     stdout, stderr = execute_command(["mount","tmpfs","/home/pi/piusb/storage/ramdisk","-t","tmpfs","-o","size=100M"])
-    print("MOUNTED TEMPORARY FILE SYSTEM (TMPFS)")
+    print("Mounted tmpfs")
 
 def unmount_tmpfs():
     stdout, stderr = execute_command(["umount","/home/pi/piusb/storage/ramdisk"])
-    print("UNMOUNTED TEMPORARY FILE SYSTEM (TMPFS)")
+    print("Unmounted tmpfs")
 
 
 def create_usb_gadget_help():
     stdout, stderr = execute_command(["/home/pi/piusb/storage/create_usb_gadget_help"])
-    print("CREATED USB GADGET HELP")
+    print("Created USB gadget for HELP drive")
 
 def create_usb_gadget_main():
     stdout, stderr = execute_command(["/home/pi/piusb/storage/create_usb_gadget_main"])
-    print("CREATED USB GADGET MAIN")
+    print("Created USB gadget for MAIN drive")
 
-def remove_usb_gadget():
+def remove_usb_gadget(drive_name):
     stdout, stderr = execute_command(["/home/pi/piusb/storage/remove_usb_gadget"])
-    print("REMOVED USB GADGET")
+    print("Removed USB gadget for " + drive_name + " drive")
 
 
 def decrypt():
     led_on()
-    passcode = read_card_passcode()
+    passcode = read_card_passcode("decryption")
     led_off()
 
-    print("(STARTED) DECRYTING FILE SYSTEM")
+    print("STARTED decrypting file system")
     stdout, stderr = execute_command(["/home/pi/piusb/encryption/decrypt_fs", passcode])
-    print("(COMPLETED) DECRYTING FILE SYSTEM")
+    print("FINISHED decrypting file system")
 
 def encrypt():
     led_on()
-    passcode = read_card_passcode()
+    passcode = read_card_passcode("encryption")
     led_off()
 
-    print("(STARTED) ENCRYPTING FILE SYSTEM")
+    print("STARTED encrypting file system")
     stdout, stderr = execute_command(["/home/pi/piusb/encryption/encrypt_fs", passcode])
-    print("(COMPLETED) ENCRYPTING FILE SYSTEM")
+    print("FINISHED encrypting file system")
 
 
-def read_card_passcode():
-    print("(STARTED) READ CARD PASSCODE")
+def read_card_passcode(reason):
+    print("Waiting for rfid card containing password for " + reason)
     stdout, stderr = execute_command(["/home/pi/piusb/rfid/src/read_card.out"])
-    print("(COMPLETED) READ CARD PASSCODE")
+    print("Card password read")
 
     # Converts passcode from bytestring to utf-8 string
     passcode = stdout.decode("utf-8")
@@ -128,6 +130,11 @@ def read_card_passcode():
     # Strips new line characters and null bytes from the output string
     passcode = passcode.rstrip("\r\n").rstrip("\x00")
     return passcode
+
+def wait_for_card():
+    print("Waiting for rfid card tap")
+    stdout, stderr = execute_command(["/home/pi/piusb/rfid/src/read_card.out"])
+    print("Card found")
 
 
 def execute_command(command):
