@@ -6,3 +6,5 @@ fingerprint/example/bep/__pycache__/
 fingerprint/src/bep/__pycache__/
 fingerprint/*.log
 fingerprint/venv
+encryption/stpm/src/*.o
+encryption/stpm/src/tpm_server
