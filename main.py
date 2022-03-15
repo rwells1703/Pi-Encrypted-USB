@@ -145,15 +145,13 @@ def execute_command(command):
 
 
 def disable_led_trigger():
-    execute_command(["sh", "-c", "\"echo", "none", ">", "/sys/class/leds/led0/trigger\""])
+    subprocess.run("sh -c \"echo none > /sys/class/leds/led0/trigger\"", shell=True)
 
 def led_on():
-    #execute_command(["sh", "-c", "echo", "1", ">", "/sys/class/leds/led0/brightness"])
-    os.system("sh -c \"echo 1 > /sys/class/leds/led0/brightness\"")
+    subprocess.run("sh -c \"echo 1 > /sys/class/leds/led0/brightness\"", shell=True)
 
 def led_off():
-    #execute_command(["sh", "-c", "echo", "0", ">", "/sys/class/leds/led0/brightness"])
-    os.system("sh -c \"echo 0 > /sys/class/leds/led0/brightness\"")
+    subprocess.run("sh -c \"echo 0 > /sys/class/leds/led0/brightness\"", shell=True)
 
 def led_flicker():
     led_on()
