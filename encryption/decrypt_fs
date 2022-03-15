@@ -1,6 +1,0 @@
-#!/bin/bash
-
-cd /home/pi/piusb/storage
-
-mount tmpfs ramdisk -t tmpfs -o size=100M
-gpg -o ramdisk/fs.img --passphrase $1 --batch --yes -d images/fs.img.gpg
