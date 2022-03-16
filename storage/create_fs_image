@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Write the file system image to the ramdisk folder
+dd bs=1M count=64 if=/dev/zero of=/home/pi/piusb/storage/ramdisk/fs.img
+
+# Format the backing file as FAT
+mkfs.exfat /home/pi/piusb/storage/ramdisk/fs.img
