@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# Start the TPM
+tpm2_startup -c
+
+# Clear all transient objects from memory
+# THis prevents 'out of memory errors
+#tpm2_flushcontext -t
+
+# Specify the password used to access the key
+password=$1
+
+# Hash the password with sha256
+echo "- Password hash:"
+passwordhash=$(echo $password | tpm2_hash -g sha256 -C o --hex)
+echo $passwordhash
+
+# Extend PCR 23 with the password hash
+tpm2_pcrextend 23:sha256=$passwordhash
+
+# Define the policy PCR values
+echo ""
+echo "- Store PCR values for policy in file:"
+tpm2_pcrread -o pcrvalues sha256:23
+
+# Create a policy from the PCR values
+echo ""
+echo "- Create a policy from the PCR values:"
+tpm2_createpolicy --policy-pcr -l sha256:23 -f pcrvalues -L policy
+
+
+# Delete policy definition file
+rm policy
+
+# Unseal the sealed blob, checking the policy is correct (PCR 23 should hold the correct value)
+# Store the unsealed data in a file
+echo ""
+echo "- Unsealing AES key from NVRAM:"
+tpm2_nvread 0x1500019 -C 0x1500019 -P pcr:sha256:23=pcrvalues > aeskey_hex
+
+# Reset PCR-23 back to zeroes
+tpm2_pcrreset 23
+
+# Remove the file containing PCR values
+rm pcrvalues
+
+# Read the aeskey as text from a hex file
+aeskey=$(xxd -p -c 32 aeskey_hex)
+echo ""
+echo "AES key:"
+echo $aeskey
+
+# Remove the file containing the AES key in hex
+rm aeskey_hex

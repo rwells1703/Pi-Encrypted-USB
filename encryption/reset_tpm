@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Delete the NV RAM chip backing file
+#rm /home/pi/piusb/NVChip
+
+# Start the TPM and clear it
+tpm2_startup -c
+tpm2_clear
+
+# Take ownership of the TPM by setting the owner password
+tpm2_changeauth -c owner verysecret

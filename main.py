@@ -9,19 +9,41 @@ def main():
 
 # Set up the device from new
 def initial_setup():
-    generate_key()
+    generate_card_password()
     create_fs_image()
+    tpm_server_proc = start_tpm()
+    reset_tpm()
+    generate_key()
     encrypt()
+    stop_tpm(tpm_server_proc)
     delete_fs_image()
 
-def generate_key():
+def generate_card_password():
     pass
+
+def generate_key():
+    passcode = read_card_passcode("key generation")
+
+    print("# STARTED generate AES key")
+
+    stdout = execute_command(["/home/pi/piusb/encryption/generate_key", passcode])
+    print(stdout.decode("utf-8"))
+    
+    print("# FINISHED generate AES key")
 
 def create_fs_image():
-    pass
+    print("# STARTED create fs image")
+
+    stdout = execute_command(["/home/pi/piusb/storage/create_fs_image"])
+    print(stdout.decode("utf-8"))
+
+    print("# FINISHED create fs image")
 
 def delete_fs_image():
-    pass
+    stdout = execute_command(["/home/pi/piusb/storage/delete_fs_image"])
+    print(stdout.decode("utf-8"))
+
+    print("# Deleted fs image")
 
 
 # When the device first starts
@@ -29,9 +51,7 @@ def startup():
     disable_led_trigger()
     led_off()
 
-    tpm_server_proc = start_tpm()
-
-    mount_help_drive()
+    '''mount_help_drive()
 
     wait_for_card()
     led_flicker()
@@ -39,6 +59,9 @@ def startup():
 
     eject_help_drive()
     print()
+    exit()'''
+
+    tpm_server_proc = start_tpm()
 
     mount_main_drive()
 
@@ -50,7 +73,7 @@ def startup():
 
     stop_tpm(tpm_server_proc)
 
-    print("END")
+    print("# END")
 
     while True:
         led_on()
@@ -62,11 +85,12 @@ def startup():
 
 def mount_help_drive():
     create_usb_gadget_help()
-    print("HELP drive mounted")
+    print("# HELP drive mounted")
 
 def eject_help_drive():
     remove_usb_gadget("HELP")
-    print("HELP drive ejected")
+    print("# HELP drive ejected")
+
 
 def get_tpm_shell_env():
     # Specify the host and port for the TPM server
@@ -92,75 +116,88 @@ def start_tpm():
         # There has been an error as the TPM server has already stopped
         print(stdout.decode("utf-8"))
 
-    print("TPM started")
+    print("# TPM started")
 
     return tpm_server_proc
 
 def stop_tpm(tpm_server_proc):
     tpm_server_proc.kill()
 
+def clear_tpm_nv():
+    stdout = execute_command(["/home/pi/piusb/encryption/clear_tpm_nv"])
+    print(stdout.decode("utf-8"))
+
+    print("TPM NV RAM has been cleared")
+
+def reset_tpm():
+    stdout = execute_command(["/home/pi/piusb/encryption/reset_tpm"])
+    print(stdout.decode("utf-8"))
+
+    print("# TPM has been reset")
+
+
 def mount_main_drive():
     mount_tmpfs()
     decrypt()
     create_usb_gadget_main()
-    print("MAIN drive mounted")
+    print("# MAIN drive mounted")
 
 def eject_main_drive():
     remove_usb_gadget("MAIN")
     encrypt()
     unmount_tmpfs()
-    print("MAIN drive ejected")
+    print("# MAIN drive ejected")
 
 
 def mount_tmpfs():
     stdout = execute_command(["mount","tmpfs","/home/pi/piusb/storage/ramdisk","-t","tmpfs","-o","size=100M"])
-    print("Mounted tmpfs")
+    print("# Mounted tmpfs")
 
 def unmount_tmpfs():
     stdout = execute_command(["umount","/home/pi/piusb/storage/ramdisk"])
-    print("Unmounted tmpfs")
+    print("# Unmounted tmpfs")
 
 
 def create_usb_gadget_help():
     stdout = execute_command(["/home/pi/piusb/storage/create_usb_gadget_help"])
-    print("Created USB gadget for HELP drive")
+    print("# Created USB gadget for HELP drive")
 
 def create_usb_gadget_main():
     stdout  = execute_command(["/home/pi/piusb/storage/create_usb_gadget_main"])
-    print("Created USB gadget for MAIN drive")
+    print("# Created USB gadget for MAIN drive")
 
 def remove_usb_gadget(drive_name):
     stdout = execute_command(["/home/pi/piusb/storage/remove_usb_gadget"])
-    print("Removed USB gadget for " + drive_name + " drive")
+    print("# Removed USB gadget for " + drive_name + " drive")
 
 
 def decrypt():
-    led_on()
     passcode = read_card_passcode("decryption")
-    led_off()
 
-    print("STARTED decrypting file system")
+    print("# STARTED decrypting file system")
     stdout = execute_command(["/home/pi/piusb/encryption/decrypt", passcode])
     print(stdout.decode("utf-8"))
     
-    print("FINISHED decrypting file system")
+    print("# FINISHED decrypting file system")
 
 def encrypt():
-    led_on()
     passcode = read_card_passcode("encryption")
-    led_off()
 
-    print("STARTED encrypting file system")
+    print("# STARTED encrypting file system")
     stdout = execute_command(["/home/pi/piusb/encryption/encrypt", passcode])
     print(stdout.decode("utf-8"))
     
-    print("FINISHED encrypting file system")
+    print("# FINISHED encrypting file system")
 
 
 def read_card_passcode(reason):
-    print("Waiting for rfid card containing password for " + reason)
+    led_on()
+
+    print("# Waiting for RFID card containing password for " + reason)
     stdout = execute_command(["/home/pi/piusb/rfid/src/read_card.out"])
-    print("Card password read")
+    print("# Card password read")
+
+    led_off()
 
     # Converts passcode from bytestring to utf-8 string
     passcode = stdout.decode("utf-8")
@@ -170,9 +207,9 @@ def read_card_passcode(reason):
     return passcode
 
 def wait_for_card():
-    print("Waiting for rfid card tap")
+    print("# Waiting for RFID card tap")
     stdout = execute_command(["/home/pi/piusb/rfid/src/read_card.out"])
-    print("Card found")
+    print("# Card found")
 
 
 def execute_command(command):

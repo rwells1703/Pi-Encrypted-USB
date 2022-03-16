@@ -1,0 +1,63 @@
+#!/bin/bash
+
+# Start the TPM
+tpm2_startup -c
+
+# Specify the password used to access the key
+password=$1
+
+# Hash the password with sha256
+echo ""
+echo "- Password hash:"
+passwordhash=$(echo $password | tpm2_hash -g sha256 -C o --hex)
+echo $passwordhash
+
+# Extend PCR 23 with the password hash
+tpm2_pcrextend 23:sha256=$passwordhash
+
+# Define the policy PCR values
+echo ""
+echo "- Store PCR values for policy in file:"
+tpm2_pcrread -o pcrvalues sha256:23
+
+# Create a policy from the PCR values
+echo ""
+echo "- Create a policy from the PCR values:"
+tpm2_createpolicy --policy-pcr -l sha256:23 -f pcrvalues -L policy
+
+# Clear the area in NVRAM that stores the sealed AES key
+# this removes the old key, if it exists
+#tpm2_nvundefine -C o 0x1500019 -P verysecret
+
+# Define a 32 byte area of NVRAM
+# Reading and writing only allowed according to the policy
+echo ""
+echo "- Define the area of NVRAM used to save the key:"
+tpm2_nvdefine 0x1500019 -C o -P verysecret -s 32 -L policy -a "policyread|policywrite"
+
+# Delete policy definition file
+rm policy
+
+# Flush transient objects to save memory
+tpm2_flushcontext -t
+
+# Generate random AES key on TPM
+aeskey=$(tpm2_getrandom --hex 32)
+echo ""
+echo "- AES key:"
+echo $aeskey
+
+# Convert the AES key from text into a hex value
+echo $aeskey | xxd -r -p -c 32 > aeskey_hex
+
+# Write the AES key to NVRAM
+tpm2_nvwrite 0x1500019 -C 0x1500019 -P pcr:sha256:23=pcrvalues -i aeskey_hex
+
+# Remove the file containing the AES key in hex
+rm aeskey_hex
+
+# Remove the file containing PCR values
+rm pcrvalues
+
+# Reset PCR-23, ready for unsealing
+tpm2_pcrreset 23
