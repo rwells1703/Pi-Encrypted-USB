@@ -4,6 +4,8 @@ import time
 import subprocess
 import os
 
+debug = False
+
 def main():
     startup()
 
@@ -27,7 +29,6 @@ def generate_key():
     print("# STARTED generate AES key")
 
     stdout = execute_command(["/home/pi/piusb/encryption/generate_key", passcode])
-    print(stdout.decode("utf-8"))
     
     print("# FINISHED generate AES key")
 
@@ -35,13 +36,11 @@ def create_fs_image():
     print("# STARTED create fs image")
 
     stdout = execute_command(["/home/pi/piusb/storage/create_fs_image"])
-    print(stdout.decode("utf-8"))
 
     print("# FINISHED create fs image")
 
 def delete_fs_image():
     stdout = execute_command(["/home/pi/piusb/storage/delete_fs_image"])
-    print(stdout.decode("utf-8"))
 
     print("# Deleted fs image")
 
@@ -75,11 +74,11 @@ def startup():
 
     print("# END")
 
-    while True:
+    '''while True:
         led_on()
         time.sleep(0.5)
         led_off()
-        time.sleep(0.5)
+        time.sleep(0.5)'''
 
     #execute_command(["poweroff"])
 
@@ -125,13 +124,11 @@ def stop_tpm(tpm_server_proc):
 
 def clear_tpm_nv():
     stdout = execute_command(["/home/pi/piusb/encryption/clear_tpm_nv"])
-    print(stdout.decode("utf-8"))
 
     print("TPM NV RAM has been cleared")
 
 def reset_tpm():
     stdout = execute_command(["/home/pi/piusb/encryption/reset_tpm"])
-    print(stdout.decode("utf-8"))
 
     print("# TPM has been reset")
 
@@ -176,7 +173,6 @@ def decrypt():
 
     print("# STARTED decrypting file system")
     stdout = execute_command(["/home/pi/piusb/encryption/decrypt", passcode])
-    print(stdout.decode("utf-8"))
     
     print("# FINISHED decrypting file system")
 
@@ -185,7 +181,6 @@ def encrypt():
 
     print("# STARTED encrypting file system")
     stdout = execute_command(["/home/pi/piusb/encryption/encrypt", passcode])
-    print(stdout.decode("utf-8"))
     
     print("# FINISHED encrypting file system")
 
@@ -215,6 +210,9 @@ def wait_for_card():
 def execute_command(command):
     process = subprocess.Popen(command, env=get_tpm_shell_env() ,stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     stdout, stderr = process.communicate()
+
+    if debug:
+        print(stdout.decode("utf-8"))
 
     return stdout
 
