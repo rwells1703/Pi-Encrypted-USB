@@ -1,7 +1,6 @@
 storage/images/*
 storage/ramdisk/*
 rfid/**/*.out
-rfid/venv
 fingerprint/example/bep/__pycache__/
 fingerprint/src/bep/__pycache__/
 fingerprint/*.log
