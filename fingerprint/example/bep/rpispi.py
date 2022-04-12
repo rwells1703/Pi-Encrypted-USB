@@ -30,7 +30,7 @@ class Rpispi(object):
 
     def __init__(self):
         self.spi = spidev.SpiDev()
-        self.port = "SPI1"
+        self.port = "SPI0"
         self.timeout = 0
         GPIO.setmode(GPIO.BCM)
 
@@ -38,7 +38,7 @@ class Rpispi(object):
         """Connect to Rpi SPI interface"""
         # Speed must be exact rates so hardcoded here for now
         speed = 976000
-        self.spi.open(1, 2)
+        self.spi.open(0, 0)
         self.spi.max_speed_hz = speed
         self.timeout = timeout
         GPIO.setup(HOST_IRQ_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
