@@ -4,12 +4,12 @@ import encryption
 def create_fs_image():
     print("# STARTED create fs image")
 
-    stdout = utils.execute_command(["/home/pi/piusb/storage/create_fs_image"])
+    stdout = utils.execute_command(["./storage/scripts/create_fs_image"])
 
     print("# FINISHED create fs image")
 
 def delete_fs_image():
-    stdout = utils.execute_command(["/home/pi/piusb/storage/delete_fs_image"])
+    stdout = utils.execute_command(["./storage/scripts/delete_fs_image"])
 
     print("# Deleted fs image")
 
@@ -46,13 +46,13 @@ def unmount_tmpfs():
 
 
 def create_usb_gadget_help():
-    stdout = utils.execute_command(["/home/pi/piusb/storage/create_usb_gadget_help"])
+    stdout = utils.execute_command(["./storage/scripts/create_usb_gadget_help"])
     print("# Created USB gadget for HELP drive")
 
 def create_usb_gadget_main():
-    stdout  = utils.execute_command(["/home/pi/piusb/storage/create_usb_gadget_main"])
+    stdout  = utils.execute_command(["./storage/scripts/create_usb_gadget_main"])
     print("# Created USB gadget for MAIN drive")
 
 def remove_usb_gadget(drive_name):
-    stdout = utils.execute_command(["/home/pi/piusb/storage/remove_usb_gadget"])
+    stdout = utils.execute_command(["./storage/scripts/remove_usb_gadget"])
     print("# Removed USB gadget for " + drive_name + " drive")
