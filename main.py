@@ -25,34 +25,17 @@ def main():
     utils.disable_led_trigger()
     utils.led_off()
 
-    '''storage.mount_help_drive()
-
-    rfid.wait_for_card()
-    utils.led_flicker()
-
-    storage.eject_help_drive()
-
-    time.sleep(0.5)'''
-
     tpm_server_proc = encryption.start_tpm()
 
-    storage.mount_main_drive()
+    storage.mount_drive()
 
     rfid.wait_for_card()
     utils.led_flicker()
     time.sleep(1)
 
-    storage.eject_main_drive()
+    storage.eject_drive()
 
     encryption.stop_tpm(tpm_server_proc)
-
-
-
-    '''while True:
-        utils.led_on()
-        time.sleep(0.5)
-        utils.led_off()
-        time.sleep(0.5)'''
 
     #utils.execute_command(["poweroff"])
 

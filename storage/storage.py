@@ -3,37 +3,25 @@ import encryption
 
 def create_fs_image():
     print("# STARTED create fs image")
-
     stdout = utils.execute_command(["./storage/scripts/create_fs_image"])
-
     print("# FINISHED create fs image")
 
 def delete_fs_image():
     stdout = utils.execute_command(["./storage/scripts/delete_fs_image"])
-
     print("# Deleted fs image")
 
 
-def mount_help_drive():
-    create_usb_gadget_help()
-    print("# HELP drive mounted")
-
-def eject_help_drive():
-    remove_usb_gadget("HELP")
-    print("# HELP drive ejected")
-
-
-def mount_main_drive():
+def mount_drive():
     mount_tmpfs()
     encryption.decrypt()
-    create_usb_gadget_main()
-    print("# MAIN drive mounted")
+    create_usb_gadget()
+    print("# Drive mounted")
 
-def eject_main_drive():
-    remove_usb_gadget("MAIN")
+def eject_drive():
+    remove_usb_gadget()
     encryption.encrypt()
     unmount_tmpfs()
-    print("# MAIN drive ejected")
+    print("# Drive ejected")
 
 
 def mount_tmpfs():
@@ -45,14 +33,10 @@ def unmount_tmpfs():
     print("# Unmounted tmpfs")
 
 
-def create_usb_gadget_help():
-    stdout = utils.execute_command(["./storage/scripts/create_usb_gadget_help"])
-    print("# Created USB gadget for HELP drive")
+def create_usb_gadget():
+    stdout  = utils.execute_command(["./storage/scripts/create_usb_gadget"])
+    print("# Created USB gadget for storage drive")
 
-def create_usb_gadget_main():
-    stdout  = utils.execute_command(["./storage/scripts/create_usb_gadget_main"])
-    print("# Created USB gadget for MAIN drive")
-
-def remove_usb_gadget(drive_name):
+def remove_usb_gadget():
     stdout = utils.execute_command(["./storage/scripts/remove_usb_gadget"])
-    print("# Removed USB gadget for " + drive_name + " drive")
+    print("# Removed USB gadget for storage drive")
