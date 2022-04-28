@@ -12,3 +12,16 @@ def execute_command(command):
         print(stdout.decode("utf-8"))
 
     return stdout
+
+def disable_led_trigger():
+    subprocess.run("sh -c \"echo none > /sys/class/leds/led0/trigger\"", shell=True)
+
+def led_on():
+    subprocess.run("sh -c \"echo 1 > /sys/class/leds/led0/brightness\"", shell=True)
+
+def led_off():
+    subprocess.run("sh -c \"echo 0 > /sys/class/leds/led0/brightness\"", shell=True)
+
+def led_flicker():
+    led_on()
+    led_off()
