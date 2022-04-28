@@ -25,7 +25,8 @@ def main():
     utils.disable_led_trigger()
     utils.led_off()
 
-    tpm_server_proc = encryption.start_tpm()
+    tpm = encryption.TPM()
+    tpm.start()
 
     storage.mount_drive()
 
@@ -35,7 +36,7 @@ def main():
 
     storage.eject_drive()
 
-    encryption.stop_tpm(tpm_server_proc)
+    tpm.stop()
 
     #utils.execute_command(["poweroff"])
 
