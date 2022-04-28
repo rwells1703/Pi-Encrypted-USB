@@ -1,17 +1,24 @@
+storage/__pycache__
 storage/images/*
 storage/ramdisk/*
 
+rfid/__pycache__
 rfid/**/*.out
 
-fingerprint/example/bep/__pycache__/
-fingerprint/src/bep/__pycache__/
+fingerprint/__pycache__
+fingerprint/example/bep/__pycache__
+fingerprint/src/bep/__pycache__
 fingerprint/*.log
 fingerprint/venv
 
+encryption/__pycache__
 encryption/stpm/src/*.o
 encryption/stpm/src/tpm_server
 
+display/__pycache__
 display/luma.examples
 display/venv
+
+utils/__pycache__
 
 NVChip
