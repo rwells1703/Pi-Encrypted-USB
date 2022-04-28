@@ -1,10 +1,17 @@
 storage/images/*
 storage/ramdisk/*
+
 rfid/**/*.out
+
 fingerprint/example/bep/__pycache__/
 fingerprint/src/bep/__pycache__/
 fingerprint/*.log
 fingerprint/venv
+
 encryption/stpm/src/*.o
 encryption/stpm/src/tpm_server
+
+display/luma.examples
+display/venv
+
 NVChip
