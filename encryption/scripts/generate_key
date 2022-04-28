@@ -27,7 +27,7 @@ tpm2_createpolicy --policy-pcr -l sha256:23 -f pcrvalues -L policy
 
 # Clear the area in NVRAM that stores the sealed AES key
 # this removes the old key, if it exists
-#tpm2_nvundefine -C o 0x1500019 -P verysecret
+tpm2_nvundefine -C o 0x1500019 -P verysecret
 
 # Define a 32 byte area of NVRAM
 # Reading and writing only allowed according to the policy
