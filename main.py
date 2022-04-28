@@ -25,14 +25,14 @@ def main():
     utils.disable_led_trigger()
     utils.led_off()
 
-    storage.mount_help_drive()
+    '''storage.mount_help_drive()
 
     rfid.wait_for_card()
     utils.led_flicker()
 
     storage.eject_help_drive()
 
-    time.sleep(0.5)
+    time.sleep(0.5)'''
 
     tpm_server_proc = encryption.start_tpm()
 

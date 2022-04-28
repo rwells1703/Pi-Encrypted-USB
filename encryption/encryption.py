@@ -17,7 +17,7 @@ def generate_key():
 
     print("# STARTED generate AES key")
 
-    stdout = utils.execute_command(["/home/pi/piusb/encryption/generate_key", passcode])
+    stdout = utils.execute_command(["./encryption/scripts/generate_key", passcode])
     
     print("# FINISHED generate AES key")
 
@@ -29,7 +29,7 @@ def decrypt():
     passcode = rfid.read_card_passcode("decryption")
 
     print("# STARTED decrypting file system")
-    stdout = utils.execute_command(["/home/pi/piusb/encryption/decrypt", passcode])
+    stdout = utils.execute_command(["./encryption/scripts/decrypt", passcode])
     
     print("# FINISHED decrypting file system")
 
@@ -37,14 +37,14 @@ def encrypt():
     passcode = rfid.read_card_passcode("encryption")
 
     print("# STARTED encrypting file system")
-    stdout = utils.execute_command(["/home/pi/piusb/encryption/encrypt", passcode])
+    stdout = utils.execute_command(["./encryption/scripts/encrypt", passcode])
     
     print("# FINISHED encrypting file system")
 
 
 def start_tpm():
     # Start the TPM server
-    tpm_server_proc = subprocess.Popen(["/home/pi/piusb/encryption/stpm/src/tpm_server"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    tpm_server_proc = subprocess.Popen(["./encryption/stpm/src/tpm_server"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
     try:
         # The 1 second pause also gives the TPM server to start properly
@@ -67,11 +67,11 @@ def stop_tpm(tpm_server_proc):
     tpm_server_proc.kill()
 
 def clear_tpm_nv():
-    stdout = utils.execute_command(["/home/pi/piusb/encryption/clear_tpm_nv"])
+    stdout = utils.execute_command(["./encryption/scripts/clear_tpm_nv"])
 
     print("TPM NV RAM has been cleared")
 
 def reset_tpm():
-    stdout = utils.execute_command(["/home/pi/piusb/encryption/reset_tpm"])
+    stdout = utils.execute_command(["./encryption/scripts/reset_tpm"])
 
     print("# TPM has been reset")
