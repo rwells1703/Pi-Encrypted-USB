@@ -1,1 +1,0 @@
-cmd_/home/pi/dwc2/dwc2.o := ld -EL   -r -o /home/pi/dwc2/dwc2.o /home/pi/dwc2/core.o /home/pi/dwc2/core_intr.o /home/pi/dwc2/platform.o /home/pi/dwc2/drd.o /home/pi/dwc2/params.o /home/pi/dwc2/hcd.o /home/pi/dwc2/hcd_intr.o /home/pi/dwc2/hcd_queue.o /home/pi/dwc2/hcd_ddma.o /home/pi/dwc2/gadget.o /home/pi/dwc2/debugfs.o
