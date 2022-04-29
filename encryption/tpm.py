@@ -32,8 +32,7 @@ class TPM:
         self.tpm_server_proc.kill()
         print("# TPM stopped")
 
-    # Reset the TPM to a blank state (clears NVRAM and changes owner hierarchy password)
+    # Reset the TPM to a blank state
     def reset(self):
         stdout = utils.execute_command(["./encryption/scripts/reset_tpm"])
-
         print("# TPM has been reset")

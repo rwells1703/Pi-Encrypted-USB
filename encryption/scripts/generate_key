@@ -3,17 +3,17 @@
 # Start the TPM
 tpm2_startup -c
 
-# Specify the password used to access the key
-password=$1
+# Specify the passcode used to access the key
+passcode=$1
 
-# Hash the password with sha256
+# Hash the passcode with sha256
 echo ""
-echo "- Password hash:"
-passwordhash=$(echo $password | tpm2_hash -g sha256 -C o --hex)
-echo $passwordhash
+echo "- Passcode hash:"
+passcodehash=$(echo $passcode | tpm2_hash -g sha256 -C o --hex)
+echo $passcodehash
 
-# Extend PCR 23 with the password hash
-tpm2_pcrextend 23:sha256=$passwordhash
+# Extend PCR 23 with the passcode hash
+tpm2_pcrextend 23:sha256=$passcodehash
 
 # Define the policy PCR values
 echo ""
