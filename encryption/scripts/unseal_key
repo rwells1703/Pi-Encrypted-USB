@@ -3,10 +3,6 @@
 # Start the TPM
 tpm2_startup -c
 
-# Clear all transient objects from memory
-# THis prevents 'out of memory errors
-#tpm2_flushcontext -t
-
 # Specify the passcode used to access the key
 passcode=$1
 
