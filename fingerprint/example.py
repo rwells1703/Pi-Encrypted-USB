@@ -34,8 +34,8 @@ def get_args():
     parser.add_argument(
         '-i',
         '--interface',
-        help='Interface type (uart)',
-        default='uart',
+        help='Interface type (rpispi)',
+        default='rpispi',
         required=False)
     parser.add_argument(
         '-p',

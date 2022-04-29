@@ -3,7 +3,7 @@ import subprocess
 import encryption
 
 # Enable more detailed logging of command output/errors
-DEBUG = False
+DEBUG = True
 
 # Spawns a subprocess for the given shell command, and logs its output
 def execute_command(command):
