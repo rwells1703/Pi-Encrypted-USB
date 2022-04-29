@@ -8,6 +8,7 @@ import rfid
 import utils
 import encryption
 import storage
+import fingerprint
 
 # Set up the device from new
 def initial_setup():
@@ -50,5 +51,8 @@ def main():
 
     print("# END")
 
+def test():
+    fingerprint.main()
+
 if __name__ == "__main__":
-    main()
+    test()

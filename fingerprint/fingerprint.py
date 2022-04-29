@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-from bep import util
-from bep.bep_extended import BepExtended
-from bep.com_phy import ComPhy
+from fingerprint.bep import util
+from fingerprint.bep.bep_extended import BepExtended
+from fingerprint.secure_com_wrapper import ComSecure
 
 def main():
     # Enable logging to the console
@@ -12,17 +12,17 @@ def main():
     interface = "rpispi"
 
     # Establish a connection
-    phy = ComPhy(interface)
-    assert phy.connect(timeout=20)
+    com = ComSecure(interface)
+    assert com.connect(timeout=20)
     
     # Instantiate the BEP command interface
-    bep_interface = BepExtended(phy)
+    bep_interface = BepExtended(com)
 
     # Run commands
     run(bep_interface)
 
     # Close the connection
-    phy.close()
+    com.close()
 
 def run(bep_interface):
     bep_interface.version_get()
