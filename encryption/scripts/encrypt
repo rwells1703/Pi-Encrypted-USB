@@ -7,7 +7,7 @@ tpm2_startup -c
 password=$1
 
 # Get the AES key from the TPM
-aeskey=$(echo $(/home/pi/piusb/encryption/scripts/unseal_key $password) | awk '{print $NF}')
+aeskey=$(echo $(./encryption/scripts/unseal_key $password) | awk '{print $NF}')
 
 #DEBUG
 echo "AES KEY:"
@@ -16,4 +16,4 @@ echo $aeskey
 # Encrypt the file using this AES key
 echo ""
 echo "- File encrypted:"
-openssl enc -nosalt -aes-256-cbc -in /home/pi/piusb/storage/ramdisk/fs.img -out /home/pi/piusb/storage/images/fs.img.encrypted -k $aeskey
+openssl enc -nosalt -aes-256-cbc -in ./storage/ramdisk/fs.img -out ./storage/images/fs.img.encrypted -k $aeskey

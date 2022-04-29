@@ -1,4 +1,4 @@
 #!/bin/bash
 
 # Delete the backing file
-rm /home/pi/piusb/storage/ramdisk/fs.img
+rm ./storage/ramdisk/fs.img

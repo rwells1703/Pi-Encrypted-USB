@@ -11,17 +11,27 @@ import storage
 
 # Set up the device from new
 def initial_setup():
+    os.chdir("/home/pi/piusb")
+
     encryption.generate_card_passcode()
+
     storage.create_fs_image()
-    tpm_server_proc = encryption.start_tpm()
-    encryption.reset_tpm()
+
+    tpm = encryption.TPM()
+    tpm.start()
+    tpm.reset()
+
     encryption.generate_key()
     encryption.encrypt()
-    encryption.stop_tpm(tpm_server_proc)
+
+    tpm.stop()
+
     storage.delete_fs_image()
 
 # When the device first starts
 def main():
+    os.chdir("/home/pi/piusb")
+    
     utils.disable_led_trigger()
     utils.led_off()
 
@@ -41,4 +51,4 @@ def main():
     print("# END")
 
 if __name__ == "__main__":
-    main()
+    initial_setup()

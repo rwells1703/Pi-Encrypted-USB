@@ -1,15 +1,19 @@
 import utils
 
 def wait_for_card():
+    utils.led_on()
+
     print("# Waiting for RFID card tap")
-    stdout = utils.execute_command(["/home/pi/piusb/rfid/src/read_card.out"])
+    stdout = utils.execute_command(["./rfid/src/read_card.out"])
     print("# Card found")
+
+    utils.led_off()
 
 def read_card_passcode(reason):
     utils.led_on()
 
     print("# Waiting for RFID card passcode for " + reason)
-    stdout = utils.execute_command(["/home/pi/piusb/rfid/src/read_card.out"])
+    stdout = utils.execute_command(["./rfid/src/read_card.out"])
     print("# Card passcode read")
 
     utils.led_off()

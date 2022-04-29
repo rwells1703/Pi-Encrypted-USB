@@ -3,15 +3,11 @@
 # Start the TPM
 tpm2_startup -c
 
-# Clear all transient objects from memory
-# THis prevents 'out of memory errors
-#tpm2_flushcontext -t
-
 # Specify the password used to access the key
 password=$1
 
 # Get the AES key from the TPM
-aeskey=$(echo $(/home/pi/piusb/encryption/scripts/unseal_key $password) | awk '{print $NF}')
+aeskey=$(echo $(./encryption/scripts/unseal_key $password) | awk '{print $NF}')
 
 #DEBUG
 echo $aeskey
@@ -19,4 +15,4 @@ echo $aeskey
 # Decrypt the file using this AES key
 echo ""
 echo "- File decrypted:"
-openssl enc -nosalt -aes-256-cbc -d -in /home/pi/piusb/storage/images/fs.img.encrypted -out /home/pi/piusb/storage/ramdisk/fs.img -k $aeskey
+openssl enc -nosalt -aes-256-cbc -d -in ./storage/images/fs.img.encrypted -out ./storage/ramdisk/fs.img -k $aeskey

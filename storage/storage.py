@@ -25,11 +25,11 @@ def eject_drive():
 
 
 def mount_tmpfs():
-    stdout = utils.execute_command(["mount","tmpfs","/home/pi/piusb/storage/ramdisk","-t","tmpfs","-o","size=100M"])
+    stdout = utils.execute_command(["mount","tmpfs","./storage/ramdisk","-t","tmpfs","-o","size=100M"])
     print("# Mounted tmpfs")
 
 def unmount_tmpfs():
-    stdout = utils.execute_command(["umount","/home/pi/piusb/storage/ramdisk"])
+    stdout = utils.execute_command(["umount","./storage/ramdisk"])
     print("# Unmounted tmpfs")
 
 

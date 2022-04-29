@@ -1,4 +1,5 @@
 import subprocess
+import time
 
 import utils
 
@@ -32,6 +33,7 @@ class TPM:
         print("# TPM stopped")
 
     # Reset the TPM to a blank state (clears NVRAM and changes owner hierarchy password)
-    def reset_tpm(self):
+    def reset(self):
         stdout = utils.execute_command(["./encryption/scripts/reset_tpm"])
+
         print("# TPM has been reset")
