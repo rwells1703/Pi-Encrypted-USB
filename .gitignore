@@ -6,8 +6,7 @@ rfid/__pycache__
 rfid/**/*.out
 
 fingerprint/__pycache__
-fingerprint/example/bep/__pycache__
-fingerprint/src/bep/__pycache__
+fingerprint/bep/__pycache__
 fingerprint/*.log
 fingerprint/venv
 
@@ -21,4 +20,6 @@ display/venv
 
 utils/__pycache__
 
+venv
+py
 NVChip
