@@ -1,5 +1,7 @@
 import subprocess
 
+import utils
+
 class TPM:
     tpm_server_proc = None
 
@@ -20,6 +22,7 @@ class TPM:
         else:
             # There has been an error as the TPM server has already stopped
             print("# TPM failed to start")
+            utils.log(stdout.decode("utf-8"))
 
         print("# TPM started")
 
