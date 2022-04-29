@@ -1,9 +1,9 @@
 import utils
 import encryption
 
-def create_fs_image():
+def create_fs_image(block_size="1M", count="64"):
     print("# STARTED create fs image")
-    stdout = utils.execute_command(["./storage/scripts/create_fs_image"])
+    stdout = utils.execute_command(["./storage/scripts/create_fs_image", block_size, count])
     print("# FINISHED create fs image")
 
 def delete_fs_image():
@@ -25,7 +25,7 @@ def eject_drive():
 
 
 def mount_tmpfs():
-    stdout = utils.execute_command(["mount","tmpfs","./storage/ramdisk","-t","tmpfs","-o","size=100M"])
+    stdout = utils.execute_command(["mount","tmpfs","./storage/ramdisk","-t","tmpfs","-o","size=1024M"])
     print("# Mounted tmpfs")
 
 def unmount_tmpfs():

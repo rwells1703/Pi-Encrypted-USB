@@ -51,4 +51,4 @@ def main():
     print("# END")
 
 if __name__ == "__main__":
-    initial_setup()
+    main()

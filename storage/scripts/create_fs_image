@@ -1,7 +1,10 @@
 #!/bin/bash
 
+echo $1
+echo $2
+
 # Write the file system image to the ramdisk folder
-dd bs=1M count=64 if=/dev/zero of=./storage/ramdisk/fs.img
+dd bs=$1 count=$2 if=/dev/zero of=./storage/ramdisk/fs.img
 
 # Format the backing file as FAT
 mkfs.exfat ./storage/ramdisk/fs.img
