@@ -7,7 +7,6 @@ tpm2_startup -c
 passcode=$1
 
 # Hash the passcode with sha256
-echo ""
 echo "- Passcode hash:"
 passcodehash=$(echo $passcode | tpm2_hash -g sha256 -C o --hex)
 echo $passcodehash

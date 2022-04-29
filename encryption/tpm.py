@@ -35,4 +35,6 @@ class TPM:
     # Reset the TPM to a blank state
     def reset(self):
         stdout = utils.execute_command(["./encryption/scripts/reset_tpm"])
+        self.stop()
+        self.start()
         print("# TPM has been reset")

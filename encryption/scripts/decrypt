@@ -10,6 +10,7 @@ passcode=$1
 aeskey=$(echo $(./encryption/scripts/unseal_key $passcode) | awk '{print $NF}')
 
 #DEBUG
+echo "AES KEY:"
 echo $aeskey
 
 # Decrypt the file using this AES key
