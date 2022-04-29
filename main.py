@@ -31,7 +31,6 @@ def main():
     storage.mount_drive()
 
     rfid.wait_for_card()
-    utils.led_flicker(1)
 
     storage.eject_drive()
 
