@@ -8,9 +8,9 @@ def wait_for_card():
 def read_card_passcode(reason):
     utils.led_on()
 
-    print("# Waiting for RFID card containing password for " + reason)
+    print("# Waiting for RFID card passcode for " + reason)
     stdout = utils.execute_command(["/home/pi/piusb/rfid/src/read_card.out"])
-    print("# Card password read")
+    print("# Card passcode read")
 
     utils.led_off()
 
@@ -19,4 +19,5 @@ def read_card_passcode(reason):
 
     # Strips new line characters and null bytes from the output string
     passcode = passcode.rstrip("\r\n").rstrip("\x00")
+
     return passcode

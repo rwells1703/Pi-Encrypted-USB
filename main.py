@@ -11,7 +11,7 @@ import storage
 
 # Set up the device from new
 def initial_setup():
-    encryption.generate_card_password()
+    encryption.generate_card_passcode()
     storage.create_fs_image()
     tpm_server_proc = encryption.start_tpm()
     encryption.reset_tpm()
