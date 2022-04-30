@@ -9,9 +9,9 @@ tpm2_startup -c
 # Flush transient objects to save memory
 tpm2_flushcontext -t
 
-# Data to be encrypted asymmetrically
+# Data to be decrypted asymmetrically
 keyaddress=$1
-plaintext=$2
+ciphertext=$2
 
-# Encrypt the data, using the public key stored in the specified persistent address in the TPM
-tpm2_rsaencrypt -c $keyaddress -o enc $plaintext
+# Decrypt the data, using the public key stored in the specified persistent address in the TPM
+tpm2_rsadecrypt -c $keyaddress $ciphertext

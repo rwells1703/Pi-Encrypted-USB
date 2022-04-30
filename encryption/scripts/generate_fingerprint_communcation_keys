@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# TODO: Remove this, it is only useful for debug purposes
+export TPM2TOOLS_TCTI=mssim:host=localhost,port=2321
+
+# Start the TPM
+tpm2_startup -c
+
+# Flush transient objects to save memory
+tpm2_flushcontext -t
+
+
+# Create primary key of the hierarchy
+tpm2_createprimary -C o -g sha256 -G rsa -c primary.ctx
+
+# Create Raspberry Pi RSA key pair for secure communication with the Fingerprint Sensor
+tpm2_create -C primary.ctx -u raspberry_key.pub -r raspberry_key.priv
+
+# Flush transient objects to save memory
+tpm2_flushcontext -t
+
+# Load the newly created key
+tpm2_load -C primary.ctx -u raspberry_key.pub -r raspberry_key.priv -c raspberry_key.ctx
+
+# Remove previous contents of this memory location
+tpm2_evictcontrol -C o -c 0x81010004
+
+# Make it persistent between reboots
+tpm2_evictcontrol -C o -c raspberry_key.ctx 0x81010004
+
+
+# Flush transient objects to save memory
+tpm2_flushcontext -t
+
+
+# Create Fingerprint Sensor RSA key pair for secure communication with the Raspberry Pi
+# (Would ordinarily be imported externally, as the fingerprint sensor key should be fixed at manufacture)
+tpm2_create -C primary.ctx -u fingerprint_key.pub -r fingerprint_key.priv
+
+# Flush transient objects to save memory
+tpm2_flushcontext -t
+
+# Load the newly created key
+tpm2_load -C primary.ctx -u fingerprint_key.pub -r fingerprint_key.priv -c fingerprint_key.ctx
+
+# Remove previous contents of this memory location
+tpm2_evictcontrol -C o -c 0x81010005
+
+# Make it persistent between reboots
+tpm2_evictcontrol -C o -c fingerprint_key.ctx 0x81010005
+
+
+# Delete temporary files e.g. key context files
+rm primary.ctx
+rm raspberry_key.pub raspberry_key.priv raspberry_key.ctx
+rm fingerprint_key.pub fingerprint_key.priv fingerprint_key.ctx
