@@ -44,14 +44,14 @@ def get_tpm_shell_env():
 
 
 def asymm_encrypt_data(key_addr, data):
-    stdout = utils.execute_command(["./encryption/scripts/asymm_encrypt_data", key, data])
-    print("# Encrypted data with key: " + key)
+    stdout = utils.execute_command(["./encryption/scripts/asymm_encrypt_data", key_addr, data], human_readable=False)
+    print("# Encrypted data with key: " + key_addr)
 
     return stdout
 
 def asymm_decrypt_data(key_addr, data):
-    stdout = utils.execute_command(["./encryption/scripts/asymm_decrypt_data", key, data])
-    print("# Decrypted data with key: " + key)
+    stdout = utils.execute_command(["./encryption/scripts/asymm_decrypt_data", key_addr, data], human_readable=False)
+    print("# Decrypted data with key: " + key_addr)
 
     return stdout
 

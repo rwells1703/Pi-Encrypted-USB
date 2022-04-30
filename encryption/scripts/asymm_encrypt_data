@@ -14,4 +14,4 @@ keyaddress=$1
 plaintext=$2
 
 # Encrypt the data, using the public key stored in the specified persistent address in the TPM
-tpm2_rsaencrypt -c $keyaddress -o enc $plaintext
+tpm2_rsaencrypt -c $keyaddress $plaintext

@@ -52,7 +52,7 @@ def main():
     print("# END")
 
 def test():
-    fingerprint.main()
+    fingerprint.example.main()
 
 if __name__ == "__main__":
     test()
