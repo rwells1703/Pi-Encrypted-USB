@@ -17,6 +17,12 @@ def delete_fs_image():
 def mount_drive():
     mount_tmpfs()
     encryption.decrypt()
+
+    # Delete any old USB gadget files that may be left over (e.g. if the program crashes)
+    # logs are now shown because it will display error messages, during normal functionality
+    # (ie. it will attempt to delete files that already exist)
+    remove_usb_gadget(False)
+
     create_usb_gadget()
     print("# Drive mounted")
 
@@ -44,6 +50,6 @@ def create_usb_gadget():
     print("# Created USB gadget for storage drive")
 
 # Delete the linux kernel gadget for a USB storage device
-def remove_usb_gadget():
-    stdout = utils.execute_command(["./storage/scripts/remove_usb_gadget"])
+def remove_usb_gadget(show_log=True):
+    stdout = utils.execute_command(["./storage/scripts/remove_usb_gadget"], show_log)
     print("# Removed USB gadget for storage drive")
