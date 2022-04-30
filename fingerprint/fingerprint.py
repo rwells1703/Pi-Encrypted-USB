@@ -2,7 +2,7 @@
 
 from fingerprint.bep import util
 from fingerprint.bep.bep_extended import BepExtended
-from fingerprint.secure_com_wrapper import ComSecure
+from fingerprint.bep.com_phy import ComPhy
 
 def main():
     # Enable logging to the console
@@ -12,7 +12,7 @@ def main():
     interface = "rpispi"
 
     # Establish a connection
-    com = ComSecure(interface)
+    com = ComPhy(interface)
     assert com.connect(timeout=20)
     
     # Instantiate the BEP command interface

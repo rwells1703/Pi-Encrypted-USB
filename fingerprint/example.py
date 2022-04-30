@@ -21,10 +21,10 @@ import logging
 import os
 import sys
 
-from bep import util
-from bep.bep_extended import BepExtended
-from bep.bep_log import BepLogging, BepLoggingError
-from bep.com_phy import ComPhy
+from fingerprint.bep import util
+from fingerprint.bep.bep_extended import BepExtended
+from fingerprint.bep.bep_log import BepLogging, BepLoggingError
+from fingerprint.bep.com_phy import ComPhy
 
 def get_args():
     """Parses args from terminal"""

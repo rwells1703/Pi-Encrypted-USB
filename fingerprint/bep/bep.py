@@ -22,8 +22,9 @@ from collections import OrderedDict
 from PIL import Image
 
 from . import util
-from .communication import Command, Argument, Com, ProgramSpecificArgument
+from .communication import Command, Argument, ProgramSpecificArgument
 
+from fingerprint.secure_com_wrapper import ComSecure as Com
 
 class BepTargetParameters(object):
     # pylint: disable = R0903
