@@ -31,9 +31,6 @@ class Main:
     def initialise(self):
         os.chdir("/home/pi/piusb")
         
-        utils.disable_led_trigger()
-        utils.led_off()
-
         self.tpm = encryption.TPM()
         self.tpm.restart()
 
