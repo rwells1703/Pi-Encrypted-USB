@@ -23,18 +23,30 @@ class TPM:
         else:
             # There has been an error as the TPM server has already stopped
             print("# TPM failed to start")
-            utils.log(stdout.decode("utf-8"))
+            utils.log(stdout)
 
         print("# TPM started")
 
     # Stop the TPM server
     def stop(self):
-        self.tpm_server_proc.kill()
+        # Kill the current TPM server process
+        if self.tpm_server_proc:
+            self.tpm_server_proc.kill()
+
+        # Make sure any other TPM server processes are also killed (sometimes they can be left running if program crashes)
+        subprocess.run("pkill -f tpm_server", shell=True)
         print("# TPM stopped")
 
+    # Reboots the TPM server
+    def restart(self):
+        self.stop()
+        self.start()
+        
     # Reset the TPM to a blank state
     def reset(self):
         stdout = utils.execute_command(["./encryption/scripts/reset_tpm"])
-        self.stop()
-        self.start()
+
+        # Restart the TPM to reload the NVRAM
+        self.restart()
+
         print("# TPM has been reset")
