@@ -15,22 +15,21 @@ class Main:
     def __init__(self):
         self.main_menu = {
             "Mount": self.mount,
+            "Eject": self.eject,
             "More": self.more,
             "Poweroff": self.poweroff
         }
 
         self.more_menu = {
-            "Format drive": self.format_drive,
+            "Reset drive": self.reset,
             "Change fingerprint": self.change_fingerprint,
             "Change card": self.change_card,
-            "Change master psk": self.change_master_psk,
-            "Factory reset": self.factory_reset,
             "Back": self.back
         }
 
     def initialise(self):
         os.chdir("/home/pi/piusb")
-        
+
         self.tpm = encryption.TPM()
         self.tpm.restart()
 
@@ -42,29 +41,46 @@ class Main:
         self.display = display.Display()
         self.display.draw_menu(self.main_menu, "Main Menu")
 
-    # Reset the device to a new blank state
-    def reset(self):
-        # Generate a new passcode to store on the RFID card
-        encryption.generate_card_passcode()
-
-        # Create a new file system image
-        storage.create_fs_image()
-
-        # Reset the TPM to blank
-        self.tpm.reset()
-
-        # Generate a new encryption key and encrypt the file system with it
-        encryption.generate_key()
-        encryption.encrypt()
-
-        # Delete the plaintext file system image
-        storage.delete_fs_image()
-
-
+    # Mount the storage drive, so it appears on the host computer
     def mount(self):
+        self.display.draw_message("Mounting...")
+
+        storage.mount_tmpfs()
+
         self.display.draw_message("Tap card")
-        storage.mount_drive()
-        self.display.draw_message("Mounted!")
+        rfid_passcode = rfid.read_card_passcode("decryption")
+        self.display.draw_message("Card found")
+
+        encryption.decrypt(rfid_passcode)
+
+        # Delete any old USB gadget files that may be left over (e.g. if the program crashes)
+        # logs are now shown because it will display error messages, during normal functionality
+        # (ie. it will attempt to delete files that already exist)
+        storage.remove_usb_gadget(False)
+
+        # The new USB gadget files and then created
+        storage.create_usb_gadget()
+
+        self.display.draw_message("Drive mounted!")
+        print("# Drive mounted!")
+        time.sleep(1)
+
+    # Eject the storage drive from the host computer
+    def eject(self):
+        self.display.draw_message("Ejecting...")
+
+        storage.remove_usb_gadget()
+
+        self.display.draw_message("Tap card")
+        rfid_passcode = rfid.read_card_passcode("encryption")
+        self.display.draw_message("Card found")
+
+        encryption.encrypt(rfid_passcode)
+
+        storage.unmount_tmpfs()
+
+        self.display.draw_message("Drive ejected!")
+        print("# Drive ejected!")
         time.sleep(1)
 
     def more(self):
@@ -75,23 +91,46 @@ class Main:
         #utils.execute_command(["poweroff"])
         exit()
 
-    def back(self):
-        return True
+    # Reset the device to a new blank state
+    def reset(self):        
+        self.display.draw_message("Resetting..")
 
-    def format_drive(self):
-        print("the drive has been factory reset")
+        # Remove any existing USB drives before resetting (this forces the host to eject)
+        storage.remove_usb_gadget(False)
+        
+        # Reset the TPM to blank
+        self.tpm.reset()
+
+        # Generate a new passcode to store on the RFID card
+        encryption.generate_card_passcode()
+
+        # Create a new file system image
+        storage.create_fs_image()
+
+        # Prompt the user to tap the RFID card
+        self.display.draw_message("Tap card")
+        rfid_passcode = rfid.read_card_passcode("encryption")
+        self.display.draw_message("Card found")
+
+        # Generate a new encryption key and encrypt the file system with it
+        encryption.generate_key(rfid_passcode)
+        encryption.encrypt(rfid_passcode)
+
+        # Delete the plaintext file system image
+        storage.delete_fs_image()
+
+        self.display.draw_message("Reset complete!")
+        print("# Reset complete!")
+        time.sleep(1)
 
     def change_fingerprint(self):
         print("new fingerprint please")
 
     def change_card(self):
         print("tap new card please")
-
-    def change_master_psk(self):
-        print("enter new psk please")
-
-    def factory_reset(self):
-        print("completely reset")
+   
+    def back(self):
+        return True
 
 
 def main():

@@ -13,26 +13,6 @@ def delete_fs_image():
     stdout = utils.execute_command(["./storage/scripts/delete_fs_image"])
     print("# Deleted fs image")
 
-# Mount the storage drive, so it appears on the host computer
-def mount_drive():
-    mount_tmpfs()
-    encryption.decrypt()
-
-    # Delete any old USB gadget files that may be left over (e.g. if the program crashes)
-    # logs are now shown because it will display error messages, during normal functionality
-    # (ie. it will attempt to delete files that already exist)
-    remove_usb_gadget(False)
-
-    create_usb_gadget()
-    print("# Drive mounted")
-
-# Eject the storage drive from the host computer
-def eject_drive():
-    remove_usb_gadget()
-    encryption.encrypt()
-    unmount_tmpfs()
-    print("# Drive ejected")
-
 # Create a temporary ramdisk for storing the file system while it is mounted
 # Size of 1024M (limited by onboard RAM size, otherwise may rely on insecure swap files)
 def mount_tmpfs():

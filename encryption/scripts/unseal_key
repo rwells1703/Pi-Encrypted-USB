@@ -28,6 +28,13 @@ tpm2_createpolicy --policy-pcr -l sha256:23 -f pcrvalues -L policy
 # Delete policy definition file
 rm policy
 
+
+# Flush transient objects to save memory
+tpm2_flushcontext -t
+
+# Flush loaded sessions to save memory
+tpm2_flushcontext -l
+
 # Unseal the sealed blob, checking the policy is correct (PCR 23 should hold the correct value)
 # Store the unsealed data in a file
 echo ""

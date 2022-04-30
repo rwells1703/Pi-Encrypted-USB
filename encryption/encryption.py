@@ -6,11 +6,9 @@ import utils
 
 # Generates a new random AES key using the TPM
 # then store it within the TPM, sealed against the RFID card passcode
-def generate_key():
-    passcode = rfid.read_card_passcode("key generation")
-
+def generate_key(rfid_passcode):
     print("# STARTED generate AES key")
-    stdout = utils.execute_command(["./encryption/scripts/generate_key", passcode])
+    stdout = utils.execute_command(["./encryption/scripts/generate_key", rfid_passcode])
     print("# FINISHED generate AES key")
 
 # Generates a new passcode to be stored on the RFID card
@@ -19,19 +17,15 @@ def generate_card_passcode():
 
 
 # Decrypts the file system
-def decrypt():
-    passcode = rfid.read_card_passcode("decryption")
-
+def decrypt(rfid_passcode):
     print("# STARTED decrypting file system")
-    stdout = utils.execute_command(["./encryption/scripts/decrypt", passcode])
+    stdout = utils.execute_command(["./encryption/scripts/decrypt", rfid_passcode])
     print("# FINISHED decrypting file system")
 
 # Encrypts the file system and stores it in the ramdisk
-def encrypt():
-    passcode = rfid.read_card_passcode("encryption")
-
+def encrypt(rfid_passcode):
     print("# STARTED encrypting file system")
-    stdout = utils.execute_command(["./encryption/scripts/encrypt", passcode])
+    stdout = utils.execute_command(["./encryption/scripts/encrypt", rfid_passcode])
     print("# FINISHED encrypting file system")
 
 
