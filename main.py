@@ -11,93 +11,108 @@ import storage
 import fingerprint
 import display
 
-# Set up the device from new
-def initial_setup():
-    os.chdir("/home/pi/piusb")
+class Main:
+    def __init__(self):
+        self.main_menu = {
+            "Mount": self.mount,
+            "More": self.more,
+            "Poweroff": self.poweroff
+        }
 
-    encryption.generate_card_passcode()
+        self.more_menu = {
+            "Format drive": self.format_drive,
+            "Change fingerprint": self.change_fingerprint,
+            "Change card": self.change_card,
+            "Change master psk": self.change_master_psk,
+            "Factory reset": self.factory_reset,
+            "Back": self.back
+        }
 
-    storage.create_fs_image()
+    def initialise(self):
+        os.chdir("/home/pi/piusb")
+        
+        utils.disable_led_trigger()
+        utils.led_off()
 
-    tpm = encryption.TPM()
-    tpm.start()
-    tpm.reset()
+        self.tpm = encryption.TPM()
+        self.tpm.restart()
 
-    encryption.generate_key()
-    encryption.encrypt()
+    def finish(self):
+        self.tpm.stop()
+        print("# END")
 
-    tpm.stop()
+    def start_gui(self):
+        self.display = display.Display()
+        self.display.draw_menu(self.main_menu, "Main Menu")
 
-    storage.delete_fs_image()
+    # Reset the device to a new blank state
+    def reset(self):
+        # Generate a new passcode to store on the RFID card
+        encryption.generate_card_passcode()
 
-# When the device first starts
-def main():
-    os.chdir("/home/pi/piusb")
-    
-    utils.disable_led_trigger()
-    utils.led_off()
+        # Create a new file system image
+        storage.create_fs_image()
 
-    tpm = encryption.TPM()
-    tpm.start()
+        # Reset the TPM to blank
+        self.tpm.reset()
 
-    storage.mount_drive()
+        # Generate a new encryption key and encrypt the file system with it
+        encryption.generate_key()
+        encryption.encrypt()
 
-    rfid.wait_for_card()
+        # Delete the plaintext file system image
+        storage.delete_fs_image()
 
-    storage.eject_drive()
 
-    tpm.stop()
+    def mount(self):
+        self.display.draw_message("Tap card")
+        storage.mount_drive()
+        self.display.draw_message("Mounted!")
+        time.sleep(1)
 
-    #utils.execute_command(["poweroff"])
+    def more(self):
+        self.display.draw_menu(self.more_menu, "More Menu")
 
-    print("# END")
-
-def test():
-    def mount(device):
-        print("yay the device is mounted")
-
-    def more(device):
-        d.draw_menu(more_menu, "More Menu")
-
-    def poweroff(device):
+    def poweroff(self):
         print("nooooo the power is out")
+        #utils.execute_command(["poweroff"])
         exit()
 
-    def back(device):
+    def back(self):
         return True
 
-    def format_drive(device):
+    def format_drive(self):
         print("the drive has been factory reset")
 
-    def change_fingerprint(device):
+    def change_fingerprint(self):
         print("new fingerprint please")
 
-    def change_card(device):
+    def change_card(self):
         print("tap new card please")
 
-    def change_master_psk(device):
+    def change_master_psk(self):
         print("enter new psk please")
 
-    def factory_reset(device):
+    def factory_reset(self):
         print("completely reset")
 
-    main_menu = {
-        "Mount": mount,
-        "More": more,
-        "Poweroff": poweroff
-    }
 
-    more_menu = {
-        "Format drive": format_drive,
-        "Change fingerprint": change_fingerprint,
-        "Change card": change_card,
-        "Change master psk": change_master_psk,
-        "Factory reset": factory_reset,
-        "Back": back
-    }
+def main():
+    m = Main()
 
-    d = display.Display()
-    d.draw_menu(main_menu, "Main Menu")
+    m.initialise()
+    m.start_gui()
+    m.finish()
+
+def debug():
+    m = Main()
+    m.initialise()
+
+    storage.mount_drive()
+    rfid.wait_for_card()
+    storage.eject_drive()
+
+    m.finish()
 
 if __name__ == "__main__":
-    test()
+    main()

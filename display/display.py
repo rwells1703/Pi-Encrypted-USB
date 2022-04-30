@@ -12,6 +12,25 @@ class Display():
         self.serial = i2c(port=1, address=0x3C)
         self.device = sh1106(self.serial)
 
+    def centred_text_coords(self, draw, text):
+        w, h = draw.textsize(text)
+
+        return [
+            (W-w)/2,
+            (H-h)/2
+            ]
+
+    def draw_centred_text(self, draw, text, fill="white", x_pos=None, y_pos=None):
+        coords = self.centred_text_coords(draw, text)
+
+        if x_pos != None:
+            coords[0] = x_pos
+        if y_pos != None:
+            coords[1] = y_pos
+        
+        draw.text(coords, text, fill)
+    
+
     def draw_menu(self, menu, title):
         selected = 0
         back = False
@@ -33,24 +52,17 @@ class Display():
             choice = input()
 
             if choice == "y":
-                back = list(menu.values())[selected](self.device)
+                back = list(menu.values())[selected]()
             else:
                 selected = (selected+1)%len(menu)
+    
+    def draw_message(self, message):
+        with canvas(self.device) as draw:
+            self.draw_centred_text(draw, message)
+    
+    def wait_for_button(self):
+        input()
 
-    def centred_text_coords(self, draw, text):
-        w, h = draw.textsize(text)
-
-        return [
-            (W-w)/2,
-            (H-h)/2
-            ]
-
-    def draw_centred_text(self, draw, text, fill="white", x_pos=None, y_pos=None):
-        coords = self.centred_text_coords(draw, text)
-
-        if x_pos != None:
-            coords[0] = x_pos
-        if y_pos != None:
-            coords[1] = y_pos
-
-        draw.text(coords, text, fill)
+    def draw_input_prompt(self, input_name):
+        with canvas(self.device) as draw:
+            pass
