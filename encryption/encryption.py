@@ -43,8 +43,20 @@ def get_tpm_shell_env():
     return env
 
 
-def asymm_encrypt_data(data, key):
-    pass
+def asymm_encrypt_data(key_addr, data):
+    stdout = utils.execute_command(["./encryption/scripts/asymm_encrypt_data", key, data])
+    print("# Encrypted data with key: " + key)
 
-def asymm_decrypt_data(data, key):
-    pass
+    return stdout
+
+def asymm_decrypt_data(key_addr, data):
+    stdout = utils.execute_command(["./encryption/scripts/asymm_decrypt_data", key, data])
+    print("# Decrypted data with key: " + key)
+
+    return stdout
+
+def check_signature(key_addr, data, signature):
+    return True
+
+def create_signature(key_addr, data):
+    return "this is a fake signature"
