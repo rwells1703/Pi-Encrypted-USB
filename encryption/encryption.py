@@ -41,3 +41,10 @@ def get_tpm_shell_env():
     env["TPM2TOOLS_TCTI"] = "mssim:host=localhost,port=2321"
     
     return env
+
+
+def asymm_encrypt_data(data, key):
+    pass
+
+def asymm_decrypt_data(data, key):
+    pass

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Start the TP
+# Start the TPM
 tpm2_startup -c
 
 # Specify the passcode used to access the key

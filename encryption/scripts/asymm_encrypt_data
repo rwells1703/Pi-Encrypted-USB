@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# TODO: Remove this, it is only useful for debug purposes
+export TPM2TOOLS_TCTI=mssim:host=localhost,port=2321
+
+# Start the TPM
+tpm2_startup -c
+
+# Data to be encrypted asymmetrically
+data=$1
+keyname=$2
+
+# Load in the public key of the recipient, used to encrypt the data
+tpm2_loadexternal -C o -G rsa -u ./encryption/keys/${keyname}.pem -c ./encryption/keys/${keyname}.ctx
+
+tpm2_readpublic -c ./encryption/keys/${keyname}.ctx -f "pem"
