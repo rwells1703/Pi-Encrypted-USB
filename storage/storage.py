@@ -28,8 +28,13 @@ def unmount_tmpfs(show_log=True):
 
 # Create a linux kernel gadget for a USB storage device in the /sys/ folder
 def create_usb_gadget(show_log=True):
-    stdout  = utils.execute_command(["./storage/scripts/create_usb_gadget"], show_log)
+    stdout  = utils.execute_command(["./storage/scripts/create_usb_gadget","/home/pi/piusb/storage/ramdisk/fs.img"], show_log)
     print("# Created USB gadget for storage drive")
+
+# Create a linux kernel gadget for a USB help drive device in the /sys/ folder
+def create_usb_gadget_help(show_log=True):
+    stdout  = utils.execute_command(["./storage/scripts/create_usb_gadget","/home/pi/piusb/storage/images/help.img"], show_log)
+    print("# Created USB gadget for help drive")
 
 # Delete the linux kernel gadget for a USB storage device
 def remove_usb_gadget(show_log=True):

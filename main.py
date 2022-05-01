@@ -38,6 +38,8 @@ class Main:
         self.tpm = encryption.TPM()
         self.tpm.restart()
 
+        storage.create_usb_gadget_help()
+
     def stop(self, sig=None, frame=None):
         storage.remove_usb_gadget(False)
         storage.delete_fs_image(False)
@@ -72,7 +74,7 @@ class Main:
             if config.INCREASED_SECURITY:
                 self.rfid_passcode = None
 
-            # Delete any old USB gadget files that may be left over (e.g. if the program crashes)
+            # Delete any old USB gadget files that may be left over (e.g. the help drive or a fs left from a program crash)
             # logs are now shown because it will display error messages, during normal functionality
             # (ie. it will attempt to delete files that already exist)
             storage.remove_usb_gadget(False)
