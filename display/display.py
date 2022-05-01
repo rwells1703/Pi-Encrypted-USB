@@ -1,5 +1,6 @@
 import time
 import RPi.GPIO as GPIO
+import PIL
 
 from luma.core.interface.serial import i2c
 from luma.core.render import canvas
@@ -50,7 +51,8 @@ class Display():
         if y_pos != None:
             coords[1] = y_pos
         
-        draw.text(coords, text, fill)
+        font = PIL.ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 12)
+        draw.text(coords, text, fill, font)
     
 
     def draw_menu(self, menu, title):
@@ -60,14 +62,14 @@ class Display():
             with canvas(self.device) as draw:
                 self.draw_centred_text(draw, title, y_pos=0)
                 border = 0
-                draw.line((border, 10, W-border, 10), fill="white")
+                draw.line((border, 14, W-border, 14), fill="white")
 
                 i = 0
                 for entry in menu.keys():
                     if i == selected:
                         entry = "> " + entry
 
-                    self.draw_centred_text(draw, entry, x_pos=border, y_pos=(i*8)+14)
+                    self.draw_centred_text(draw, entry, x_pos=border, y_pos=(i*12)+14)
                     i += 1
 
             self.poll_buttons()
