@@ -8,6 +8,7 @@ from luma.oled.device import sh1106
 import display.button
 
 W, H = (128, 64)
+FONT_SIZE = 12
 
 class Display():
     def __init__(self):
@@ -19,6 +20,8 @@ class Display():
         
         # Use the sh1106 driver
         self.device = sh1106(self.serial)
+
+        self.font = PIL.ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", FONT_SIZE)
 
         display.button.configure_gpio()
 
@@ -32,23 +35,25 @@ class Display():
         self.device.cleanup()
 
     def centred_text_coords(self, draw, text):
-        w, h = draw.textsize(text)
+        w, h = draw.textsize(text, self.font)
 
         return [
             (W-w)/2,
             (H-h)/2
             ]
 
-    def draw_centred_text(self, draw, text, fill="white", x_pos=None, y_pos=None):
+    def draw_centred_text(self, draw, text, x_pos=None, y_pos=None, x_offset=0, y_offset=0, fill="white"):
         coords = self.centred_text_coords(draw, text)
 
         if x_pos != None:
             coords[0] = x_pos
         if y_pos != None:
             coords[1] = y_pos
-        
-        font = PIL.ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 12)
-        draw.text(coords, text, fill, font)
+
+        coords[0] += x_offset
+        coords[1] += y_offset
+
+        draw.text(coords, text, fill, self.font)
     
 
     def draw_menu(self, menu, title):
@@ -68,7 +73,7 @@ class Display():
                         if i == selected:
                             entry = "> " + entry
 
-                        self.draw_centred_text(draw, entry, x_pos=border, y_pos=(i*12)+14)
+                        self.draw_centred_text(draw, entry, x_pos=border, y_pos=(i*FONT_SIZE) + 2 + FONT_SIZE)
                         i += 1
 
             if self.buttons["top"].is_pressed():
@@ -81,8 +86,18 @@ class Display():
             time.sleep(0.01)
 
     def draw_message(self, message):
+        messages = message.split("\n")
+
         with canvas(self.device) as draw:
-            self.draw_centred_text(draw, message)
+            line = 0
+            for message in messages:
+                if (len(messages) > 1):
+                    y_offset=FONT_SIZE*(line-len(messages)/2+1)
+                else:
+                    y_offset = 0
+
+                self.draw_centred_text(draw, message, y_offset=y_offset)
+                line += 1
     
     def wait_for_button(self):
         input()

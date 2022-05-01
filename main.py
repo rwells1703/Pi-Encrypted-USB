@@ -60,16 +60,41 @@ class Main:
         if self.mounted:
             self.display.draw_message("Already mounted!")
             print("# Already mounted!")
+            time.sleep(1)
         else:
             self.display.draw_message("Mounting...")
 
             storage.mount_tmpfs()
 
-            self.display.draw_message("Tap card")
-            self.rfid_passcode = rfid.read_card_passcode("decryption")
-            self.display.draw_message("Card found")
+            valid = False
+            tries = 3
 
-            encryption.Encryption.decrypt(self.rfid_passcode)
+            while not valid:
+                if tries == 0:
+                    self.poweroff()
+
+                self.display.draw_message("Tap card")
+                self.rfid_passcode = rfid.read_card_passcode("decryption")
+                self.display.draw_message("Card found")
+
+                valid = encryption.Encryption.decrypt(self.rfid_passcode)
+                if not valid:
+                    tries -= 1
+
+                    self.display.draw_message("Incorrect\n{tries} tries left\nShutting down".format(tries=tries))
+                    time.sleep(2)
+                else:
+                    self.display.draw_message("Correct")
+                    time.sleep(2)
+                    break
+                
+
+
+            # If the user has run out of tries to enter
+            if tries == 0:
+                self.display.draw_message("Out of tries")
+                time.sleep(2)
+                poweroff
 
             if config.INCREASED_SECURITY:
                 self.rfid_passcode = None
@@ -86,7 +111,7 @@ class Main:
 
             self.display.draw_message("Drive mounted!")
             print("# Drive mounted!")
-        time.sleep(1)
+            time.sleep(1)
 
     # Eject the storage drive from the host computer
     def eject(self):
@@ -99,7 +124,7 @@ class Main:
             if config.INCREASED_SECURITY:
                 self.display.draw_message("Tap card")
                 self.rfid_passcode = rfid.read_card_passcode("encryption")
-                self.display.draw_message("Card found")
+                self.display.draw_message("Card found") 
 
             storage.remove_usb_gadget()
 
@@ -143,6 +168,7 @@ class Main:
 
         # Generate a new encryption key and encrypt the file system with it
         encryption.Encryption.generate_key(rfid_passcode)
+
         encryption.Encryption.encrypt(rfid_passcode)
 
         # Delete the plaintext file system image

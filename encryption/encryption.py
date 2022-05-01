@@ -31,11 +31,20 @@ class Encryption:
         stdout = utils.execute_command(["./encryption/scripts/decrypt", rfid_passcode])
         print("# FINISHED decrypting file system")
 
+        if "a policy check failed" in stdout.decode("utf-8"):
+            return False
+        return True
+
     # Encrypts the file system and stores it in the ramdisk
     def encrypt(rfid_passcode):
         print("# STARTED encrypting file system")
         stdout = utils.execute_command(["./encryption/scripts/encrypt", rfid_passcode])
         print("# FINISHED encrypting file system")
+
+        if "a policy check failed" in stdout.decode("utf-8"):
+            return False
+            
+        return True
 
 
     # Specify the host and port for the TPM server in the shell environment variables
