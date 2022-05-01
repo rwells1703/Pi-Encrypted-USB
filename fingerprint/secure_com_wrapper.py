@@ -29,7 +29,7 @@ class ComSecure(fingerprint.bep.communication.Com):
     # Simulation of sending app_data for a command over an encrypted connection
     def send_app_data(self, app_data):
         # Create a digital signature of the command
-        app_data_sig = encryption.create_signature(RASPBERRY_KEY_ADDR, app_data)
+        app_data_sig = encryption.Encryption.create_signature(RASPBERRY_KEY_ADDR, app_data)
 
         # Write the app data to a temporary file so it can be read by the encryption script
         # (It cannot be input as a command line argument as it may contain null bytes)
@@ -39,7 +39,7 @@ class ComSecure(fingerprint.bep.communication.Com):
         f.close()
 
         # Concatenate the data with its signature, then asymmetrically encrypt this data using the raspberry pi's public key
-        app_data_encrypted = encryption.asymm_encrypt_data(RASPBERRY_KEY_ADDR, "storage/ramdisk/app_data.dat")
+        app_data_encrypted = encryption.Encryption.asymm_encrypt_data(RASPBERRY_KEY_ADDR, "storage/ramdisk/app_data.dat")
 
         # Remove the app data file
         os.remove("storage/ramdisk/app_data.dat")
@@ -57,7 +57,7 @@ class ComSecure(fingerprint.bep.communication.Com):
         f.close()
 
         # Decrypt the command and signature using the raspberry pi's private key
-        app_data_decrypted = encryption.asymm_decrypt_data(RASPBERRY_KEY_ADDR, "storage/ramdisk/app_data_encrypted.dat")
+        app_data_decrypted = encryption.Encryption.asymm_decrypt_data(RASPBERRY_KEY_ADDR, "storage/ramdisk/app_data_encrypted.dat")
 
         # Remove the encrypted app data file
         os.remove("storage/ramdisk/app_data_encrypted.dat")
@@ -67,7 +67,7 @@ class ComSecure(fingerprint.bep.communication.Com):
         app_data_sig = app_data_decrypted.split(b';')[1]
 
         # Check the signature
-        if encryption.check_signature(RASPBERRY_KEY_ADDR, app_data, app_data_sig):
+        if encryption.Encryption.check_signature(RASPBERRY_KEY_ADDR, app_data, app_data_sig):
             return app_data
         
         # Otherwise if the signature is invalid,

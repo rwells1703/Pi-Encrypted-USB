@@ -65,7 +65,7 @@ class Main:
             rfid_passcode = rfid.read_card_passcode("decryption")
             self.display.draw_message("Card found")
 
-            encryption.decrypt(rfid_passcode)
+            encryption.Encryption.decrypt(self.rfid_passcode)
 
             # Delete any old USB gadget files that may be left over (e.g. if the program crashes)
             # logs are now shown because it will display error messages, during normal functionality
@@ -91,9 +91,7 @@ class Main:
 
             storage.remove_usb_gadget()
 
-            self.display.draw_message("Tap card")
-            rfid_passcode = rfid.read_card_passcode("encryption")
-            self.display.draw_message("Card found")
+            encryption.Encryption.encrypt(self.rfid_passcode)
 
             encryption.encrypt(rfid_passcode)
 
@@ -123,7 +121,7 @@ class Main:
         self.tpm.reset()
 
         # Generate a new passcode to store on the RFID card
-        encryption.generate_card_passcode()
+        encryption.Encryption.generate_card_passcode()
 
         # Create a new file system image
         storage.create_fs_image()
@@ -134,8 +132,8 @@ class Main:
         self.display.draw_message("Card found")
 
         # Generate a new encryption key and encrypt the file system with it
-        encryption.generate_key(rfid_passcode)
-        encryption.encrypt(rfid_passcode)
+        encryption.Encryption.generate_key(rfid_passcode)
+        encryption.Encryption.encrypt(rfid_passcode)
 
         # Delete the plaintext file system image
         storage.delete_fs_image()
