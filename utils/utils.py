@@ -1,9 +1,7 @@
 import subprocess
 
 import encryption
-
-# Enable more detailed logging of command output/errors
-DEBUG = False
+import config
 
 # Spawns a subprocess for the given shell command, and logs its output
 def execute_command(command, show_log=True):
@@ -16,5 +14,5 @@ def execute_command(command, show_log=True):
 
 # Log a message to the console if debug is enabled
 def log(message, show_log=True):
-    if DEBUG and show_log:
+    if config.DEBUG and show_log:
         print(message.decode("utf-8"))

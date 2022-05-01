@@ -11,6 +11,7 @@ import encryption
 import storage
 import fingerprint
 import display
+import config
 
 class Main:
     def __init__(self):
@@ -22,6 +23,7 @@ class Main:
         }
 
         self.mounted = False
+        self.rfid_passcode = None
 
     def start(self):
         os.chdir("/home/pi/piusb")
@@ -62,10 +64,13 @@ class Main:
             storage.mount_tmpfs()
 
             self.display.draw_message("Tap card")
-            rfid_passcode = rfid.read_card_passcode("decryption")
+            self.rfid_passcode = rfid.read_card_passcode("decryption")
             self.display.draw_message("Card found")
 
             encryption.Encryption.decrypt(self.rfid_passcode)
+
+            if config.INCREASED_SECURITY:
+                self.rfid_passcode = None
 
             # Delete any old USB gadget files that may be left over (e.g. if the program crashes)
             # logs are now shown because it will display error messages, during normal functionality
@@ -89,11 +94,17 @@ class Main:
         else:
             self.display.draw_message("Ejecting...")
 
+            if config.INCREASED_SECURITY:
+                self.display.draw_message("Tap card")
+                self.rfid_passcode = rfid.read_card_passcode("encryption")
+                self.display.draw_message("Card found")
+
             storage.remove_usb_gadget()
 
             encryption.Encryption.encrypt(self.rfid_passcode)
-
-            encryption.encrypt(rfid_passcode)
+            
+            if config.INCREASED_SECURITY:
+                self.rfid_passcode = None
 
             storage.unmount_tmpfs()
 
@@ -105,8 +116,8 @@ class Main:
 
     def poweroff(self):
         print("nooooo the power is out")
+        self.stop()
         #utils.execute_command(["poweroff"])
-        exit()
 
     # Reset the device to a new blank state
     def reset(self):       

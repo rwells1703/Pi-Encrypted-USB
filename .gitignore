@@ -20,6 +20,7 @@ display/venv
 
 utils/__pycache__
 
+__pycache__
 venv
 py
 NVChip
