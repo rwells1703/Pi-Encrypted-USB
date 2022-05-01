@@ -33,7 +33,7 @@ class Main:
         storage.unmount_tmpfs(False)
         
         # Runs the "stop" function when the program closes (e.g. if user presses ctrl+c)
-        signal.signal(signal.SIGINT, self.stop)
+        signal.signal(signal.SIGINT, self.close)
 
         self.tpm = encryption.TPM()
         self.tpm.restart()
@@ -48,8 +48,6 @@ class Main:
         self.display.stop()
 
         self.tpm.stop()
-
-        exit()
 
     def start_gui(self):
         self.display = display.Display()
@@ -94,7 +92,7 @@ class Main:
             if tries == 0:
                 self.display.draw_message("Out of tries")
                 time.sleep(2)
-                poweroff
+                self.poweroff()
 
             if config.INCREASED_SECURITY:
                 self.rfid_passcode = None
@@ -143,7 +141,11 @@ class Main:
 
     def poweroff(self):
         self.stop()
-        #utils.execute_command(["poweroff"])
+        utils.execute_command(["poweroff"])
+
+    def close(self):
+        self.stop()
+        exit()
 
     # Reset the device to a new blank state
     def reset(self):       
@@ -184,17 +186,7 @@ def main():
 
     m.start()
     m.start_gui()
-    m.stop()
-
-def debug():
-    m = Main()
-    m.start()
-
-    storage.mount_drive()
-    rfid.wait_for_card()
-    storage.eject_drive()
-
-    m.stop()
+    m.close()
 
 if __name__ == "__main__":
     main()
