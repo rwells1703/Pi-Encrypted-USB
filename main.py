@@ -117,6 +117,8 @@ class Main:
         # Remove any existing USB drives before resetting (this forces the host to eject)
         storage.remove_usb_gadget()
         
+        self.mounted = False
+        
         # Reset the TPM to blank
         self.tpm.reset()
 
