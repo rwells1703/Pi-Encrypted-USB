@@ -1,0 +1,3 @@
+#!/bin/bash
+
+mount tmpfs ./storage/ramdisk -t tmpfs -o size=$1

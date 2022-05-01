@@ -1,0 +1,5 @@
+#!/bin/bash
+
+while [[ $(findmnt ./storage/ramdisk) != "" ]]; do
+    umount ./storage/ramdisk;
+done

@@ -16,12 +16,14 @@ def delete_fs_image():
 # Create a temporary ramdisk for storing the file system while it is mounted
 # Size of 1024M (limited by onboard RAM size, otherwise may rely on insecure swap files)
 def mount_tmpfs():
-    stdout = utils.execute_command(["mount","tmpfs","./storage/ramdisk","-t","tmpfs","-o","size=1024M"])
+    remove_usb_gadget()
+    unmount_tmpfs()
+    stdout = utils.execute_command(["./storage/scripts/mount_tpmfs","1024M"])
     print("# Mounted tmpfs")
 
 # Delete the ramdisk
 def unmount_tmpfs():
-    stdout = utils.execute_command(["umount","./storage/ramdisk"])
+    stdout = utils.execute_command(["./storage/scripts/unmount_tpmfs"])
     print("# Unmounted tmpfs")
 
 # Create a linux kernel gadget for a USB storage device in the /sys/ folder
