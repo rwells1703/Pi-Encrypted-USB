@@ -117,7 +117,6 @@ class Main:
         time.sleep(1)
 
     def poweroff(self):
-        print("nooooo the power is out")
         self.stop()
         #utils.execute_command(["poweroff"])
 
@@ -133,15 +132,13 @@ class Main:
         # Reset the TPM to blank
         self.tpm.reset()
 
-        # Generate a new passcode to store on the RFID card
-        encryption.Encryption.generate_card_passcode()
-
         # Create a new file system image
         storage.create_fs_image()
 
         # Prompt the user to tap the RFID card
         self.display.draw_message("Tap card")
-        rfid_passcode = rfid.read_card_passcode("encryption")
+        # Generate a new passcode and write it to the RFID card
+        rfid_passcode = rfid.reset_card_passcode()
         self.display.draw_message("Card found")
 
         # Generate a new encryption key and encrypt the file system with it

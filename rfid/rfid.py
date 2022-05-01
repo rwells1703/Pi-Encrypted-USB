@@ -1,4 +1,5 @@
 import utils
+import encryption
 
 def wait_for_card():
     print("# Waiting for RFID card tap")
@@ -15,5 +16,15 @@ def read_card_passcode(reason):
 
     # Strips new line characters and null bytes from the output string
     passcode = passcode.rstrip("\r\n").rstrip("\x00")
+
+    return stdout
+
+def reset_card_passcode():
+    # Create a new passcode in hex
+    passcode = encryption.Encryption.generate_card_passcode()
+
+    print("# Waiting for RFID card for writing new key")
+    stdout = utils.execute_command(["./rfid/src/write_card.out", passcode])
+    print("# New card passcode written")
 
     return passcode

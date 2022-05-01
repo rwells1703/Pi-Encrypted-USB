@@ -1,5 +1,7 @@
 import os
 import subprocess
+import random
+import string
 
 import rfid
 import utils
@@ -14,8 +16,14 @@ class Encryption:
 
     # Generates a new passcode to be stored on the RFID card
     def generate_card_passcode():
-        pass
+        # The passcode may consist of any letters, numbers and punctuation characters
+        alphabet = string.ascii_letters + string.digits + string.punctuation
 
+        # Generate the passcode randomly
+        passcode = "".join(random.choice(alphabet) for i in range(16))
+
+        print("# Generated new passcode: " + passcode)
+        return passcode
 
     # Decrypts the file system
     def decrypt(rfid_passcode):
