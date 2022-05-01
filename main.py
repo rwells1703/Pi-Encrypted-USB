@@ -23,24 +23,28 @@ class Main:
 
         self.mounted = False
 
-
-    def initialise(self):
-        # Runs the "finish" function when the program closes (e.g. if user presses ctrl+c)
-        signal.signal(signal.SIGINT, self.finish)
-
+    def start(self):
         os.chdir("/home/pi/piusb")
+
+        storage.remove_usb_gadget(False)
+        storage.delete_fs_image(False)
+        storage.unmount_tmpfs(False)
+        
+        # Runs the "stop" function when the program closes (e.g. if user presses ctrl+c)
+        signal.signal(signal.SIGINT, self.stop)
 
         self.tpm = encryption.TPM()
         self.tpm.restart()
 
-    def finish(self, sig=None, frame=None):
-        storage.remove_usb_gadget()
-        storage.delete_fs_image()
-        storage.unmount_tmpfs()
+    def stop(self, sig=None, frame=None):
+        storage.remove_usb_gadget(False)
+        storage.delete_fs_image(False)
+        storage.unmount_tmpfs(False)
+
+        self.display.stop()
 
         self.tpm.stop()
 
-        print("# END")
         exit()
 
     def start_gui(self):
@@ -111,7 +115,7 @@ class Main:
         self.display.draw_message("Resetting..")
 
         # Remove any existing USB drives before resetting (this forces the host to eject)
-        storage.remove_usb_gadget(False)
+        storage.remove_usb_gadget()
         
         # Reset the TPM to blank
         self.tpm.reset()
@@ -142,19 +146,19 @@ class Main:
 def main():
     m = Main()
 
-    m.initialise()
+    m.start()
     m.start_gui()
-    m.finish()
+    m.stop()
 
 def debug():
     m = Main()
-    m.initialise()
+    m.start()
 
     storage.mount_drive()
     rfid.wait_for_card()
     storage.eject_drive()
 
-    m.finish()
+    m.stop()
 
 if __name__ == "__main__":
     main()
