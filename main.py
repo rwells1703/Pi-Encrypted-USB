@@ -20,6 +20,8 @@ class Main:
             "Poweroff": self.poweroff
         }
 
+        self.mounted = False
+
 
     def initialise(self):
         os.chdir("/home/pi/piusb")
@@ -37,6 +39,10 @@ class Main:
 
     # Mount the storage drive, so it appears on the host computer
     def mount(self):
+        if self.mounted:
+            self.display.draw_message("Already mounted!")
+            print("# Already mounted!")
+        else:
         self.display.draw_message("Mounting...")
 
         storage.mount_tmpfs()
@@ -55,12 +61,18 @@ class Main:
         # The new USB gadget files and then created
         storage.create_usb_gadget()
 
+            self.mounted = True
+
         self.display.draw_message("Drive mounted!")
         print("# Drive mounted!")
         time.sleep(1)
 
     # Eject the storage drive from the host computer
     def eject(self):
+        if not self.mounted:
+            self.display.draw_message("Not mounted!")
+            print("# Not mounted!")
+        else:
         self.display.draw_message("Ejecting...")
 
         storage.remove_usb_gadget()
@@ -72,6 +84,8 @@ class Main:
         encryption.encrypt(rfid_passcode)
 
         storage.unmount_tmpfs()
+
+            self.mounted = False
 
         self.display.draw_message("Drive ejected!")
         print("# Drive ejected!")
