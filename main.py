@@ -3,6 +3,7 @@
 import time
 import subprocess
 import os
+import signal
 
 import rfid
 import utils
@@ -24,14 +25,23 @@ class Main:
 
 
     def initialise(self):
+        # Runs the "finish" function when the program closes (e.g. if user presses ctrl+c)
+        signal.signal(signal.SIGINT, self.finish)
+
         os.chdir("/home/pi/piusb")
 
         self.tpm = encryption.TPM()
         self.tpm.restart()
 
-    def finish(self):
+    def finish(self, sig=None, frame=None):
+        storage.remove_usb_gadget()
+        storage.delete_fs_image()
+        storage.unmount_tmpfs()
+
         self.tpm.stop()
+
         print("# END")
+        exit()
 
     def start_gui(self):
         self.display = display.Display()
@@ -43,28 +53,28 @@ class Main:
             self.display.draw_message("Already mounted!")
             print("# Already mounted!")
         else:
-        self.display.draw_message("Mounting...")
+            self.display.draw_message("Mounting...")
 
-        storage.mount_tmpfs()
+            storage.mount_tmpfs()
 
-        self.display.draw_message("Tap card")
-        rfid_passcode = rfid.read_card_passcode("decryption")
-        self.display.draw_message("Card found")
+            self.display.draw_message("Tap card")
+            rfid_passcode = rfid.read_card_passcode("decryption")
+            self.display.draw_message("Card found")
 
-        encryption.decrypt(rfid_passcode)
+            encryption.decrypt(rfid_passcode)
 
-        # Delete any old USB gadget files that may be left over (e.g. if the program crashes)
-        # logs are now shown because it will display error messages, during normal functionality
-        # (ie. it will attempt to delete files that already exist)
-        storage.remove_usb_gadget(False)
+            # Delete any old USB gadget files that may be left over (e.g. if the program crashes)
+            # logs are now shown because it will display error messages, during normal functionality
+            # (ie. it will attempt to delete files that already exist)
+            storage.remove_usb_gadget(False)
 
-        # The new USB gadget files and then created
-        storage.create_usb_gadget()
+            # The new USB gadget files and then created
+            storage.create_usb_gadget()
 
             self.mounted = True
 
-        self.display.draw_message("Drive mounted!")
-        print("# Drive mounted!")
+            self.display.draw_message("Drive mounted!")
+            print("# Drive mounted!")
         time.sleep(1)
 
     # Eject the storage drive from the host computer
@@ -73,22 +83,22 @@ class Main:
             self.display.draw_message("Not mounted!")
             print("# Not mounted!")
         else:
-        self.display.draw_message("Ejecting...")
+            self.display.draw_message("Ejecting...")
 
-        storage.remove_usb_gadget()
+            storage.remove_usb_gadget()
 
-        self.display.draw_message("Tap card")
-        rfid_passcode = rfid.read_card_passcode("encryption")
-        self.display.draw_message("Card found")
+            self.display.draw_message("Tap card")
+            rfid_passcode = rfid.read_card_passcode("encryption")
+            self.display.draw_message("Card found")
 
-        encryption.encrypt(rfid_passcode)
+            encryption.encrypt(rfid_passcode)
 
-        storage.unmount_tmpfs()
+            storage.unmount_tmpfs()
 
             self.mounted = False
 
-        self.display.draw_message("Drive ejected!")
-        print("# Drive ejected!")
+            self.display.draw_message("Drive ejected!")
+            print("# Drive ejected!")
         time.sleep(1)
 
     def poweroff(self):
@@ -97,7 +107,7 @@ class Main:
         exit()
 
     # Reset the device to a new blank state
-    def reset(self):        
+    def reset(self):       
         self.display.draw_message("Resetting..")
 
         # Remove any existing USB drives before resetting (this forces the host to eject)
