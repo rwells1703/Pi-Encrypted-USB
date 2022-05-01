@@ -55,9 +55,8 @@ class Display():
 
     def draw_menu(self, menu, title):
         selected = 0
-        back = False
 
-        while not back:
+        while True:
             with canvas(self.device) as draw:
                 self.draw_centred_text(draw, title, y_pos=0)
                 border = 0
@@ -76,7 +75,7 @@ class Display():
             if self.buttons["top"]["pressed"]:
                 selected = (selected+1)%len(menu)
             elif self.buttons["bottom"]["pressed"]:
-                back = list(menu.values())[selected]()
+                list(menu.values())[selected]()
 
             time.sleep(0.01)
     

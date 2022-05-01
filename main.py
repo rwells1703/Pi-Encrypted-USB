@@ -16,16 +16,10 @@ class Main:
         self.main_menu = {
             "Mount": self.mount,
             "Eject": self.eject,
-            "More": self.more,
+            "Reset": self.reset,
             "Poweroff": self.poweroff
         }
 
-        self.more_menu = {
-            "Reset drive": self.reset,
-            "Change fingerprint": self.change_fingerprint,
-            "Change card": self.change_card,
-            "Back": self.back
-        }
 
     def initialise(self):
         os.chdir("/home/pi/piusb")
@@ -83,9 +77,6 @@ class Main:
         print("# Drive ejected!")
         time.sleep(1)
 
-    def more(self):
-        self.display.draw_menu(self.more_menu, "More Menu")
-
     def poweroff(self):
         print("nooooo the power is out")
         #utils.execute_command(["poweroff"])
@@ -122,15 +113,6 @@ class Main:
         self.display.draw_message("Reset complete!")
         print("# Reset complete!")
         time.sleep(1)
-
-    def change_fingerprint(self):
-        print("new fingerprint please")
-
-    def change_card(self):
-        print("tap new card please")
-   
-    def back(self):
-        return True
 
 
 def main():
