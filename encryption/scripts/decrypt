@@ -16,4 +16,4 @@ echo $aeskey
 # Decrypt the file using this AES key
 echo ""
 echo "- File decrypted:"
-openssl enc -nosalt -aes-256-cbc -d -in ./storage/images/fs.img.encrypted -out ./storage/ramdisk/fs.img -k $aeskey
+openssl enc -nosalt -aes-256-cbc -md sha512 -pbkdf2 -d -in ./storage/images/fs.img.encrypted -out ./storage/ramdisk/fs.img -k $aeskey
