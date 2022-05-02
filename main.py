@@ -40,11 +40,17 @@ class Main:
 
         storage.create_usb_gadget_help()
 
-    def stop(self, sig=None, frame=None):
+        if config.GUI:
+            self.display = display.Display()
+            self.display.draw_menu(self.main_menu, "Main Menu")
+
+    # Safely stop running processes and clean up temporary data
+    def stop(self):
         storage.remove_usb_gadget(False)
         storage.delete_fs_image(False)
         storage.unmount_tmpfs(False)
 
+        if config.GUI:
         self.display.stop()
 
         self.tpm.stop()
@@ -139,11 +145,13 @@ class Main:
             print("# Drive ejected!")
         time.sleep(1)
 
+    # Power off the device safely
     def poweroff(self):
         self.stop()
         utils.execute_command(["poweroff"])
 
-    def close(self):
+    # Close the application in response to a force exit (e.g. ctrl+c)
+    def close(self, sig=None, frame=None):
         self.stop()
         exit()
 
@@ -189,4 +197,7 @@ def main():
     m.close()
 
 if __name__ == "__main__":
-    main()
+    m = Main()
+
+    m.start()
+    m.close()

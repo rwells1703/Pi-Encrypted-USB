@@ -3,3 +3,6 @@ DEBUG = True
 
 # Require card authentication on drive ejection
 INCREASED_SECURITY = False
+
+# Enable the graphical user interface
+GUI = True
