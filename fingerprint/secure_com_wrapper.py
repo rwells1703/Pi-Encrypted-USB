@@ -5,8 +5,9 @@ import fingerprint.bep.communication
 import encryption
 
 # The persistent memory adresses within the TPM where the keys are stored
-FINGERPRINT_KEY_ADDR = "0x81010004"
-RASPBERRY_KEY_ADDR = "0x81010005"
+RASPBERRY_KEY_ADDR = "0x81010002"
+FINGERPRINT_KEY_ADDR = "0x81010003"
+
 
 
 class ComSecure(fingerprint.bep.communication.Com):

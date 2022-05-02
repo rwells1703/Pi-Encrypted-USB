@@ -11,14 +11,6 @@ echo ""
 echo "- Create primary key:"
 tpm2_createprimary -C o -g sha256 -G rsa -c primary.ctx
 
-# Make primary key persistent
-echo ""
-echo "- Evict primary key to persitent memory:"
-tpm2_evictcontrol -C o -c primary.ctx 0x81010004
-
-# Remove the primary key context file
-rm primary.ctx
-
 
 # Specify the passcode used to access the key
 passcode=$1
@@ -63,18 +55,22 @@ echo $aeskey | xxd -r -p -c 32 > aeskey_hex
 # Flush transient objects to save memory
 tpm2_flushcontext -t
 
-tpm2_getcap handles-transient
-
 # Create the sealing key
 # then seal the AES key to it using the policy
 echo ""
 echo "- Create sealing key and seal AES key to it:"
-tpm2_create -C 0x81010004 -L policy -i aeskey_hex -c sealing.ctx
+tpm2_create -C primary.ctx -L policy -i aeskey_hex -c sealing.ctx
+
+# Flush transient objects to save memory
+tpm2_flushcontext -t
 
 # Make sealing key persistent
 echo ""
 echo "- Evict sealing key to persitent memory:"
-tpm2_evictcontrol -C o -c sealing.ctx 0x81010005
+tpm2_evictcontrol -C o -c sealing.ctx 0x81010001
+
+# Remove the primary key context file
+rm primary.ctx
 
 # Delete policy definition file
 rm policy

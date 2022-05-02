@@ -6,6 +6,10 @@ tpm2_startup -c
 # Flush transient objects to save memory
 tpm2_flushcontext -t
 
+# Create primary key of the hierarchy
+tpm2_createprimary -C o -g sha256 -G rsa -c primary.ctx
+
+
 # Specify the passcode used to access the key
 passcode=$1
 
@@ -35,7 +39,7 @@ tpm2_pcrreset 23
 # Unseal the AES key from sealing key
 echo ""
 echo "- Unseal the AES key from sealing key:"
-tpm2_unseal -psession:session.ctx -c 0x81010005 > aeskey_hex
+tpm2_unseal -p session:session.ctx -c 0x81010001 > aeskey_hex
 
 # Close the trial policy session
 tpm2_flushcontext session.ctx
