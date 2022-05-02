@@ -1,5 +1,4 @@
 import os
-import subprocess
 import random
 import string
 
@@ -55,14 +54,18 @@ class Encryption:
         return env
 
 
+    def generate_fingerprint_communication_keys():
+        stdout = utils.execute_command(["./encryption/scripts/generate_fingerprint_communcation_keys"], False)
+        print("# Generated encryption keys for communication with fingerprint sensor")
+
     def asymm_encrypt_data(key_addr, data):
-        stdout = utils.execute_command(["./encryption/scripts/asymm_encrypt_data", key_addr, data], human_readable=False)
+        stdout = utils.execute_command(["./encryption/scripts/asymm_encrypt_data", key_addr, data], False)
         print("# Encrypted data with key: " + key_addr)
 
         return stdout
 
     def asymm_decrypt_data(key_addr, data):
-        stdout = utils.execute_command(["./encryption/scripts/asymm_decrypt_data", key_addr, data], human_readable=False)
+        stdout = utils.execute_command(["./encryption/scripts/asymm_decrypt_data", key_addr, data], False)
         print("# Decrypted data with key: " + key_addr)
 
         return stdout

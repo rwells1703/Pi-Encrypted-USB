@@ -53,7 +53,7 @@ class Main:
         storage.unmount_tmpfs(False)
 
         if config.GUI:
-        self.display.stop()
+            self.display.stop()
 
         self.tpm.stop()
 
@@ -179,6 +179,9 @@ class Main:
 
         encryption.Encryption.encrypt(rfid_passcode)
 
+        # Generate encrytion keys for communicating with fingerprint sensor
+        encryption.Encryption.generate_fingerprint_communication_keys()
+
         # Delete the plaintext file system image
         storage.delete_fs_image()
 
@@ -189,13 +192,8 @@ class Main:
 
 def main():
     m = Main()
-
-    m.start()
     m.start_gui()
-    m.close()
+    m.start()
 
 if __name__ == "__main__":
-    m = Main()
-
-    m.start()
-    m.close()
+    main()
