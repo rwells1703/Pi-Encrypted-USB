@@ -9,8 +9,7 @@ passcode=$1
 # Get the AES key from the TPM
 aeskey=$(echo $(./encryption/scripts/unseal_key $passcode) | awk '{print $NF}')
 
-#DEBUG
-echo "AES KEY:"
+echo "- AES KEY:"
 echo $aeskey
 
 # Decrypt the file using this AES key
