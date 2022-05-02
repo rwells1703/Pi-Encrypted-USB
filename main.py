@@ -43,6 +43,8 @@ class Main:
         if config.GUI:
             self.display = display.Display()
             self.display.draw_menu(self.main_menu, "Main Menu")
+        else:
+            print("# GUI Disabled")
 
     # Safely stop running processes and clean up temporary data
     def stop(self):
@@ -54,10 +56,6 @@ class Main:
         self.display.stop()
 
         self.tpm.stop()
-
-    def start_gui(self):
-        self.display = display.Display()
-        self.display.draw_menu(self.main_menu, "Main Menu")
 
     # Mount the storage drive, so it appears on the host computer
     def mount(self):
