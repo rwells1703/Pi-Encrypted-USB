@@ -3,14 +3,8 @@
 # Start the TPM
 tpm2_startup -c
 
-# Specify the passcode used to access the key
-passcode=$1
-
-# Get the AES key from the TPM
-aeskey=$(echo $(./encryption/scripts/unseal_key $passcode) | awk '{print $NF}')
-
-echo "- AES KEY:"
-echo $aeskey
+# Specify the AES key used to encrypt the files
+aeskey=$1
 
 # Encrypt the file using this AES key
 echo ""

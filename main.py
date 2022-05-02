@@ -174,13 +174,15 @@ class Main:
         rfid_passcode = rfid.reset_card_passcode()
         self.display.draw_message("Card found")
 
-        # Generate a new encryption key and encrypt the file system with it
-        encryption.Encryption.generate_key(rfid_passcode)
+        # Generate a new encryption key and seal it in the TPM
+        encryption.Encryption.generate_and_seal_key(rfid_passcode)
 
+
+        # Encrypt the file system with the key
         encryption.Encryption.encrypt(rfid_passcode)
 
         # Generate encrytion keys for communicating with fingerprint sensor
-        encryption.Encryption.generate_fingerprint_communication_keys()
+        #encryption.Encryption.generate_fingerprint_communication_keys()
 
         # Delete the plaintext file system image
         storage.delete_fs_image()
@@ -192,7 +194,6 @@ class Main:
 
 def main():
     m = Main()
-    m.start_gui()
     m.start()
 
 if __name__ == "__main__":

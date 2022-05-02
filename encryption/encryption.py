@@ -8,9 +8,9 @@ import utils
 class Encryption:
     # Generates a new random AES key using the TPM
     # then store it within the TPM, sealed against the RFID card passcode
-    def generate_key(rfid_passcode):
+    def generate_and_seal_key(rfid_passcode):
         print("# STARTED generate AES key")
-        stdout = utils.execute_command(["./encryption/scripts/generate_key", rfid_passcode])
+        stdout = utils.execute_command(["./encryption/scripts/generate_and_seal_key", rfid_passcode])
         print("# FINISHED generate AES key")
 
     # Generates a new passcode to be stored on the RFID card
@@ -24,27 +24,50 @@ class Encryption:
         print("# Generated new passcode: " + passcode)
         return passcode
 
-    # Decrypts the file system
-    def decrypt(rfid_passcode):
-        print("# STARTED decrypting file system")
-        stdout = utils.execute_command(["./encryption/scripts/decrypt", rfid_passcode])
-        print("# FINISHED decrypting file system")
+    # Unseal the AES key from the TPM
+    def unseal_key(rfid_passcode):
+        print("# STARTED unsealing key")
+        stdout = utils.execute_command(["./encryption/scripts/unseal_key", rfid_passcode])
+        print("# FINISHED unsealing key")
 
         if "a policy check failed" in stdout.decode("utf-8"):
             return False
+        else:
+            aes_key = stdout.split(b"\n")[-2]
+            return aes_key
+
+    # Decrypts the file system
+    def decrypt(rfid_passcode):
+        aes_key = Encryption.unseal_key(rfid_passcode)
+
+        if not aes_key:
+            return False
+        
+        print("# STARTED decrypting file system")
+        stdout = utils.execute_command(["./encryption/scripts/decrypt", aes_key])
+        print("# FINISHED decrypting file system")
+
+        if "bad decrypt" in stdout.decode("utf-8"):
+            return False
+
         return True
+            
 
     # Encrypts the file system and stores it in the ramdisk
     def encrypt(rfid_passcode):
+        aes_key = Encryption.unseal_key(rfid_passcode)
+
+        if not aes_key:
+            return False
+
         print("# STARTED encrypting file system")
-        stdout = utils.execute_command(["./encryption/scripts/encrypt", rfid_passcode])
+        stdout = utils.execute_command(["./encryption/scripts/encrypt", aes_key])
         print("# FINISHED encrypting file system")
 
-        if "a policy check failed" in stdout.decode("utf-8"):
+        if "bad decrypt" in stdout.decode("utf-8"):
             return False
-            
+        
         return True
-
 
     # Specify the host and port for the TPM server in the shell environment variables
     def get_tpm_shell_env():
