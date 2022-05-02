@@ -1,47 +1,50 @@
 #!/usr/bin/env python3
 
+import encryption
+
 from fingerprint.bep import util
 from fingerprint.bep.bep_extended import BepExtended
 from fingerprint.bep.com_phy import ComPhy
 
-def main():
-    # Enable logging to the console
-    util.setup_logging()
+class Fingerprint:
+    def __init__(self):
+        self.start()
+        self.run()
+        self.stop()
 
-    # Use the raspberry pi SPI ports
-    interface = "rpispi"
+    def start(self):
+        # Enable logging to the console
+        util.setup_logging()
 
-    # Establish a connection
-    com = ComPhy(interface)
-    assert com.connect(timeout=20)
-    
-    # Instantiate the BEP command interface
-    bep_interface = BepExtended(com)
+        # Use the raspberry pi SPI ports
+        interface = "rpispi"
 
-    # Run commands
-    run(bep_interface)
+        # Establish a connection
+        com = ComPhy(interface)
+        assert com.connect(timeout=20)
+        
+        # Instantiate the BEP command interface
+        self.bep_interface = BepExtended(com)
 
-    # Close the connection
-    com.close()
+    def stop(self):
+        # Close the connection
+        com.close()
 
-def run(bep_interface):
-    bep_interface.version_get()
+    def run(self):
+        self.bep_interface.version_get()
 
-    # Clear the flash storage
-    #bep_interface.storage_format()
+        # Clear the flash storage
+        #bep_interface.storage_format()
 
-    # Get the number of templates
-    template_count = bep_interface.template_get_count()
+        # Get the number of templates
+        template_count = self.bep_interface.template_get_count()
 
-    # Enroll the fingerprint
-    bep_interface.enroll_finger()
-    bep_interface.template_save(template_count)
-    bep_interface.template_remove_ram()
+        # Enroll the fingerprint
+        self.bep_interface.enroll_finger()
+        self.bep_interface.template_save(template_count)
+        self.bep_interface.template_remove_ram()
 
-    # Identify the fingerprint
-    bep_interface.capture()
-    bep_interface.image_extract()
-    bep_interface.identify()
-
-if __name__ == "__main__":
-    main()
+        # Identify the fingerprint
+        self.bep_interface.capture()
+        self.bep_interface.image_extract()
+        self.bep_interface.identify()
