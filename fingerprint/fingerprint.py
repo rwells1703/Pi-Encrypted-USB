@@ -9,8 +9,6 @@ from fingerprint.bep.com_phy import ComPhy
 class Fingerprint:
     def __init__(self):
         self.start()
-        self.run()
-        self.stop()
 
     def start(self):
         # Enable logging to the console
@@ -30,21 +28,20 @@ class Fingerprint:
         # Close the connection
         com.close()
 
-    def run(self):
-        self.bep_interface.version_get()
-
-        # Clear the flash storage
-        #bep_interface.storage_format()
-
-        # Get the number of templates
-        template_count = self.bep_interface.template_get_count()
-
+    def enroll(self):
         # Enroll the fingerprint
         self.bep_interface.enroll_finger()
-        self.bep_interface.template_save(template_count)
+
+        # Save the fingerprint as id 0
+        self.bep_interface.template_save(0)
         self.bep_interface.template_remove_ram()
 
-        # Identify the fingerprint
+    def identify(self):
+        # Capture and identify the fingerprint
         self.bep_interface.capture()
         self.bep_interface.image_extract()
-        self.bep_interface.identify()
+        return self.bep_interface.identify()
+
+    def clear(self):
+        # Clear the flash storage
+        bep_interface.storage_format()

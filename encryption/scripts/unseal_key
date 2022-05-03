@@ -6,9 +6,6 @@ tpm2_startup -c
 # Flush transient objects to save memory
 tpm2_flushcontext -t
 
-# Create primary key of the hierarchy
-tpm2_createprimary -C o -g sha256 -G rsa -c primary.ctx
-
 
 # Specify the passcode used to access the key
 passcode=$1
@@ -21,6 +18,7 @@ echo $passcodehash
 
 # Extend PCR 23 with the passcode hash
 tpm2_pcrextend 23:sha256=$passcodehash
+
 
 # Begin a real policy session
 tpm2_startauthsession --policy-session -S session.ctx
@@ -35,6 +33,7 @@ rm policy
 
 # Reset PCR-23, ready for unsealing
 tpm2_pcrreset 23
+
 
 # Unseal the AES key from sealing key
 echo ""

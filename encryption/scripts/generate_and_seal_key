@@ -31,7 +31,7 @@ tpm2_startauthsession -S session.ctx
 # Add a policy event based on the value of PCR number 23
 echo ""
 echo "- PCR Policy event (trial):"
-tpm2_policypcr -S session.ctx -l sha256:23  -L policy
+tpm2_policypcr -S session.ctx -l sha256:23 -L policy
 
 # Close the trial policy session
 tpm2_flushcontext session.ctx

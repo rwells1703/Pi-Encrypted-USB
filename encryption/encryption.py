@@ -6,11 +6,15 @@ import rfid
 import utils
 
 class Encryption:
+    # The persistent memory adresses within the TPM where the keys are stored
+    RASPBERRY_KEY_ADDR = "0x81010002"
+    FINGERPRINT_KEY_ADDR = "0x81010003"
+
     # Generates a new random AES key using the TPM
     # then store it within the TPM, sealed against the RFID card passcode
-    def generate_and_seal_key(rfid_passcode):
+    def generate_and_seal_key(rfid_passcode, fingerprint_signature):
         print("# STARTED generate AES key")
-        stdout = utils.execute_command(["./encryption/scripts/generate_and_seal_key", rfid_passcode])
+        stdout = utils.execute_command(["./encryption/scripts/generate_and_seal_key", rfid_passcode, fingerprint_signature])
         print("# FINISHED generate AES key")
 
     # Generates a new passcode to be stored on the RFID card
@@ -25,9 +29,9 @@ class Encryption:
         return passcode
 
     # Unseal the AES key from the TPM
-    def unseal_key(rfid_passcode):
+    def unseal_key(rfid_passcode, fingerprint_signature):
         print("# STARTED unsealing key")
-        stdout = utils.execute_command(["./encryption/scripts/unseal_key", rfid_passcode])
+        stdout = utils.execute_command(["./encryption/scripts/unseal_key", rfid_passcode, fingerprint_signature])
         print("# FINISHED unsealing key")
 
         if "a policy check failed" in stdout.decode("utf-8"):
@@ -37,8 +41,8 @@ class Encryption:
             return aes_key
 
     # Decrypts the file system
-    def decrypt(rfid_passcode):
-        aes_key = Encryption.unseal_key(rfid_passcode)
+    def decrypt(rfid_passcode, fingerprint_signature):
+        aes_key = Encryption.unseal_key(rfid_passcode, fingerprint_signature)
 
         if not aes_key:
             return False
@@ -54,8 +58,8 @@ class Encryption:
             
 
     # Encrypts the file system and stores it in the ramdisk
-    def encrypt(rfid_passcode):
-        aes_key = Encryption.unseal_key(rfid_passcode)
+    def encrypt(rfid_passcode, fingerprint_signature):
+        aes_key = Encryption.unseal_key(rfid_passcode, fingerprint_signature)
 
         if not aes_key:
             return False
