@@ -19,7 +19,7 @@ class Fingerprint:
 
         # Establish a connection
         com = ComPhy(interface)
-        assert com.connect(timeout=20)
+        assert com.connect()
         
         # Instantiate the BEP command interface
         self.bep_interface = BepExtended(com)
