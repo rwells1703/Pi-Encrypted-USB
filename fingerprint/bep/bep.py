@@ -251,7 +251,7 @@ class Bep(object):
             logging.info("Identify: match against id %s", match_id)
         else:
             logging.info("Identify: no match")
-        return match, match_id, com.last_communication_signature
+        return match, match_id, com.last_message, com.last_message_signature
 
     def template_save(self, idx=-1):
         if int(idx) < 0:

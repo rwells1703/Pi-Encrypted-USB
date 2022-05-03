@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Start the TPM and clear it
+tpm2_startup -c
+
+# Flush transient objects to save memory
+tpm2_flushcontext -t
+
+
+# Address of key to sign the data
+keyaddress=$1
+
+# Data file to be signed
+datafile=$2
+
+#echo "00 00 00 00" | xxd -r -p | cat - $datafile > $paddeddatafile
+#mv $paddeddatafile $datafile
+
+# Digitally sign the data, and output the signature file
+echo "00 00 00 00" | xxd -r -p | tpm2_sign -c $keyaddress -o sig.dat
+
+# Output the contents of the signature file to the console
+cat sig.dat
+
+# Remove the signature file
+rm sig.dat

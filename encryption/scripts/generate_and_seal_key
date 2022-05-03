@@ -33,6 +33,21 @@ echo ""
 echo "- PCR Policy event (trial):"
 tpm2_policypcr -S session.ctx -l sha256:23 -L policy
 
+# Contains the address in persistent memory for the key that digitally signed the fingerprint message
+fingerprint_key_address=$2
+
+# Contains the message that the fingerprint sensor responded with
+fingerprint_message=$3
+
+# Contains a digital signature from the fingerprint sensors TPM
+# this will verify that the fingerprint was not forged
+fingerprint_message_signature=$4
+
+#echo "00 00 00 00 $fingerprint_message_signature" | xxd -r -p | tpm2_sign -c 0x81010003 -o signature.dat
+
+tpm2_policysigned -S session.ctx -g sha256 -s $fingerprint_message_signature -c $fingerprint_key_address -L policy
+
+
 # Close the trial policy session
 tpm2_flushcontext session.ctx
 

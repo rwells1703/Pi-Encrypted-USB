@@ -6,7 +6,6 @@ tpm2_startup -c
 # Flush transient objects to save memory
 tpm2_flushcontext -t
 
-
 # Create primary key of the hierarchy
 tpm2_createprimary -C o -G rsa -c primary.ctx
 

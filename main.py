@@ -84,7 +84,7 @@ class Main:
 
                 # Get signed identification from the fingerprint sensor
                 self.display.draw_message("Scan fingerprint")
-                fingerprint_match, fingerprint_id, self.fingerprint_signature = self.fingerprint.identify()
+                fingerprint_match, fingerprint_id, fingerprint_message, fingerprint_message_signature = self.fingerprint.identify()
                 self.display.draw_message("Fingerprint scanned")
                 time.sleep(1)
                 self.display.draw_message("Decrypting...")
@@ -92,8 +92,8 @@ class Main:
                 # If the fingerprint was valid, move onto the next stage of authentication
                 if fingerprint_match:
                     print("# Matched fingerprint")
-                    print(self.rfid_passcode)
-                    valid = encryption.Encryption.decrypt(self.rfid_passcode, self.fingerprint_signature)
+
+                    valid = encryption.Encryption.decrypt(self.rfid_passcode, fingerprint_message, fingerprint_message_signature)
 
                     if valid:
                         print("# Correct")
@@ -146,9 +146,15 @@ class Main:
                 self.rfid_passcode = rfid.read_card_passcode("encryption")
                 self.display.draw_message("Card found") 
 
+            # Get signed identification from the fingerprint sensor
+            self.display.draw_message("Scan fingerprint")
+            fingerprint_match, fingerprint_id, fingerprint_message, fingerprint_message_signature = self.fingerprint.identify()
+            self.display.draw_message("Fingerprint scanned")
+
             storage.remove_usb_gadget()
 
-            encryption.Encryption.encrypt(self.rfid_passcode, self.fingerprint_signature)
+            # Encrypt the drive
+            encryption.Encryption.encrypt(self.rfid_passcode, fingerprint_message, fingerprint_message_signature)
             
             if config.INCREASED_SECURITY:
                 self.rfid_passcode = None
@@ -197,15 +203,15 @@ class Main:
 
         # Get signed identification from the fingerprint sensor
         self.display.draw_message("Scan fingerprint")
-        fingerprint_match, fingerprint_id, fingerprint_signature = self.fingerprint.identify()
+        fingerprint_match, fingerprint_id, fingerprint_message, fingerprint_message_signature = self.fingerprint.identify()
         self.display.draw_message("Fingerprint scanned")
 
         # Generate a new encryption key and seal it in the TPM
-        encryption.Encryption.generate_and_seal_key(rfid_passcode, fingerprint_signature)
+        encryption.Encryption.generate_and_seal_key(rfid_passcode, fingerprint_message, fingerprint_message_signature)
 
 
         # Encrypt the file system with the key
-        encryption.Encryption.encrypt(rfid_passcode, fingerprint_signature)
+        encryption.Encryption.encrypt(rfid_passcode, fingerprint_message, fingerprint_message_signature)
 
         # Delete the plaintext file system image
         storage.delete_fs_image()

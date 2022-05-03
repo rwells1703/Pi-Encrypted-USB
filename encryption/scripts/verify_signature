@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Start the TPM and clear it
+tpm2_startup -c
+
+# Flush transient objects to save memory
+tpm2_flushcontext -t
+
+# Address of key that was used to sign the data
+keyaddress=$1
+
+# Data file and signature to be verified
+datafile=$2
+signature=$3
+
+#echo "00 00 00 00" | xxd -r -p | cat - $datafile > $paddeddatafile
+#mv $paddeddatafile $datafile
+
+# Verify that the signature was correct
+echo "00 00 00 00" | xxd -r -p | tpm2_verifysignature -c $keyaddress -s $signature
