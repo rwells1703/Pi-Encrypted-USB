@@ -37,10 +37,17 @@ class Fingerprint:
         self.bep_interface.template_remove_ram()
 
     def identify(self):
-        # Capture and identify the fingerprint
-        self.bep_interface.capture()
-        self.bep_interface.image_extract()
-        return self.bep_interface.identify()
+        completed = False
+        while not completed:
+            try:
+                # Capture and identify the fingerprint
+                self.bep_interface.capture()
+                self.bep_interface.image_extract()
+                response = self.bep_interface.identify()
+                completed = True
+                return response
+            except AssertionError:
+                print("# CRC Check failed, trying again")
 
     def clear(self):
         # Clear the flash storage
