@@ -1,16 +1,16 @@
 #!/bin/bash
 
-# TODO: Remove this, it is only useful for debug purposes
-export TPM2TOOLS_TCTI=mssim:host=localhost,port=2321
-
 # Start the TPM
 tpm2_startup -c
 
 # Flush transient objects to save memory
 tpm2_flushcontext -t
 
-# Data to be encrypted asymmetrically
+
+#Address of key to encrypt data
 keyaddress=$1
+
+# Data to be encrypted asymmetrically
 plaintext=$2
 
 # Encrypt the data, using the public key stored in the specified persistent address in the TPM
