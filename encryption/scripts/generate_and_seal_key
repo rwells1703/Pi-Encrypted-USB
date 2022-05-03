@@ -18,7 +18,7 @@ passcode=$1
 # Hash the passcode with sha256
 echo ""
 echo "- Passcode hash:"
-passcodehash=$(echo $passcode | tpm2_hash -g sha256 -C o --hex)
+passcodehash=$(echo $passcode | tpm2_hash -C o -g sha256 --hex)
 echo $passcodehash
 
 # Extend PCR 23 with the passcode hash

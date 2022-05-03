@@ -86,7 +86,10 @@ class Main:
                 self.display.draw_message("Scan fingerprint")
                 fingerprint_match, fingerprint_id, self.fingerprint_signature = self.fingerprint.identify()
                 self.display.draw_message("Fingerprint scanned")
+                time.sleep(1)
+                self.display.draw_message("Decrypting...")
 
+                # If the fingerprint was valid, move onto the next stage of authentication
                 if fingerprint_match:
                     print("# Matched fingerprint")
                     print(self.rfid_passcode)
@@ -101,6 +104,7 @@ class Main:
                 # Otherwise, the authorisation was invalid  
                 tries -= 1
 
+                # Provide a warning message
                 self.display.draw_message("Incorrect\n{tries} tries left\nShutting down".format(tries=tries))
                 time.sleep(2)
 
@@ -136,6 +140,7 @@ class Main:
         else:
             self.display.draw_message("Ejecting...")
 
+            # Extra check for the extra security option
             if config.INCREASED_SECURITY:
                 self.display.draw_message("Tap card")
                 self.rfid_passcode = rfid.read_card_passcode("encryption")
