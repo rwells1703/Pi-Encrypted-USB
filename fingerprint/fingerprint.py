@@ -42,6 +42,10 @@ class Fingerprint:
         self.bep_interface.image_extract()
         return self.bep_interface.identify()
 
-    def clear(self):
+    def clear_ram(self):
+        # Remove any template currently in the RAM
+        self.bep_interface.template_remove_ram()
+
+    def clear_flash(self):
         # Clear the flash storage
-        bep_interface.storage_format()
+        self.bep_interface.storage_format()
