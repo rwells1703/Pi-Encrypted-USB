@@ -26,3 +26,4 @@ py
 NVChip
 test.py
 *.log
+launch.json
