@@ -25,7 +25,7 @@ class ComSecure(fingerprint.bep.communication.Com):
         application_package = self.securely_communicate(application_package, encryption.Encryption.FINGERPRINT_KEY_ADDR, encryption.Encryption.RASPBERRY_KEY_ADDR)
 
         if application_package == None:
-            stats = False
+            status = False
             
         return status, application_package
 
