@@ -7,8 +7,19 @@ tpm2_startup -c
 tpm2_flushcontext -t
 
 
-# Specify the passcode used to access the key
+# Passcode used to access the key
 passcode=$1
+
+# Address in persistent memory for the key that digitally signed the fingerprint message
+fingerprint_key_address=$2
+
+# Message that the fingerprint sensor responded with
+fingerprint_message=$3
+
+# Contains a digital signature from the fingerprint sensors TPM
+# this will verify that the fingerprint was not forged
+fingerprint_message_signature=$4
+
 
 # Hash the passcode with sha256
 echo ""
@@ -19,6 +30,15 @@ echo $passcodehash
 # Extend PCR 23 with the passcode hash
 tpm2_pcrextend 23:sha256=$passcodehash
 
+# Hash the fingerprint message with sha256
+echo ""
+echo "- Fingerprint message hash:"
+fingerprintmessagehash=$(cat $fingerprint_message | tpm2_hash -C o -g sha256 --hex)
+echo $fingerprintmessagehash
+
+# Extend PCR 23 with the fingerprint message hash
+tpm2_pcrextend 23:sha256=$fingerprintmessagehash
+
 
 # Begin a real policy session
 tpm2_startauthsession --policy-session -S session.ctx
@@ -28,17 +48,9 @@ echo ""
 echo "- PCR Policy event (real):"
 tpm2_policypcr -S session.ctx -l sha256:23 -L policy
 
-
-# Contains the address in persistent memory for the key that digitally signed the fingerprint message
-fingerprint_key_address=$2
-
-# Contains the message that the fingerprint sensor responded with
-fingerprint_message=$3
-
-# Contains a digital signature from the fingerprint sensors TPM
-# this will verify that the fingerprint was not forged
-fingerprint_message_signature=$4
-
+# Extend the auth value with a signature verification
+echo ""
+echo "- PCR Signed event (real):"
 tpm2_policysigned -S session.ctx -g sha256 -s $fingerprint_message_signature -c $fingerprint_key_address -L policy
 
 # Delete policy definition file
