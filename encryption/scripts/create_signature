@@ -13,8 +13,8 @@ keyaddress=$1
 # Data file to be signed
 datafile=$2
 
-#echo "00 00 00 00" | xxd -r -p | cat - $datafile > $paddeddatafile
-#mv $paddeddatafile $datafile
+# Prevent DA lockout by clearing the counter
+tpm2_dictionarylockout -c
 
 # Digitally sign the data, and output the signature file
 echo "00 00 00 00" | xxd -r -p | tpm2_sign -c $keyaddress -o sig.dat
