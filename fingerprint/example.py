@@ -19,12 +19,13 @@
 import argparse
 import logging
 import os
-import sys
 
 from fingerprint.bep import util
 from fingerprint.bep.bep_extended import BepExtended
 from fingerprint.bep.bep_log import BepLogging, BepLoggingError
 from fingerprint.bep.com_phy import ComPhy
+
+import encryption
 
 def get_args():
     """Parses args from terminal"""
@@ -246,6 +247,9 @@ def menu(bep_interface, clear_cmd, timeout):
 
 
 def main():
+    tpm = encryption.TPM()
+    tpm.restart()
+
     """Starts a console against BEP"""
     args = get_args()
     if args.timeout < 2:
@@ -276,22 +280,6 @@ def main():
     if not args.gui:
         bep_interface = BepExtended(phy)
         menu(bep_interface, clear_cmd, args.timeout)
-    else:
-        try:
-            import tkinter as tk
-        except ImportError:
-            sys.exit("This tool requires the tkinter Python module. Install it using:"
-                     "\n $ sudo apt-get install python3-tk")
-        from bep.demo_gui import DemoApp
-        from bep.bep_gui_wrapper import BepGUIWrapper
-
-        bep_interface = BepGUIWrapper(phy)
-        root = tk.Tk()
-        print("BEP ref app host interface")
-        print("Com port: %s" % bep_interface.serial.get_port())
-        app = DemoApp(master=root, bep_if=bep_interface)
-        app.master.title("FPC BEP GUI Application")
-        app.mainloop()
 
     phy.close()
 
