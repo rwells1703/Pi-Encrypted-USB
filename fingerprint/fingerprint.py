@@ -18,15 +18,15 @@ class Fingerprint:
         interface = "rpispi"
 
         # Establish a connection
-        com = ComPhy(interface)
-        assert com.connect()
+        self.com = ComPhy(interface)
+        assert self.com.connect(timeout=20)
         
         # Instantiate the BEP command interface
-        self.bep_interface = BepExtended(com)
+        self.bep_interface = BepExtended(self.com)
 
     def stop(self):
         # Close the connection
-        com.close()
+        self.com.close()
 
     def enroll(self):
         # Enroll the fingerprint
