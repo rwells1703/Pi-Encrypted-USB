@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import time
-import subprocess
 import os
 import signal
 
@@ -115,7 +114,7 @@ class Main:
                 time.sleep(2)
                 self.poweroff()
 
-            if config.INCREASED_SECURITY:
+            if config.AUTH_CARD_ON_EJECT:
                 self.rfid_passcode = None
 
             # Delete any old USB gadget files that may be left over (e.g. the help drive or a fs left from a program crash)
@@ -141,7 +140,7 @@ class Main:
             self.display.draw_message("Ejecting...")
 
             # Extra check for the extra security option
-            if config.INCREASED_SECURITY:
+            if config.AUTH_CARD_ON_EJECT:
                 self.display.draw_message("Tap card")
                 self.rfid_passcode = rfid.read_card_passcode("encryption")
                 self.display.draw_message("Card found") 
@@ -156,7 +155,7 @@ class Main:
             # Encrypt the drive
             encryption.Encryption.encrypt(self.rfid_passcode, fingerprint_message, fingerprint_message_signature)
             
-            if config.INCREASED_SECURITY:
+            if config.AUTH_CARD_ON_EJECT:
                 self.rfid_passcode = None
 
             storage.unmount_tmpfs()

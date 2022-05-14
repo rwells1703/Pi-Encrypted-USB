@@ -1,7 +1,6 @@
-import os
-
 import fingerprint.bep.communication
 
+import config
 import encryption
 
 class ComSecure(fingerprint.bep.communication.Com):
@@ -34,36 +33,38 @@ class ComSecure(fingerprint.bep.communication.Com):
         # Create a digital signature of the data using the SENDER'S PRIVATE KEY
         data_sig = encryption.Encryption.create_signature(senders_key_address, data)
 
+        # Only encrypt communications if configuration flag is set
+        if config.SECURE_FINGERPRINT_COMMS:
+            encryption.Encryption.create_temporary_file("data", data)
+            encryption.Encryption.create_temporary_file("signature", data_sig)
 
-        encryption.Encryption.create_temporary_file("data", data)
-        encryption.Encryption.create_temporary_file("signature", data_sig)
+            # Asymmetrically encrypt the data and signature using the RECEIVER'S PUBLIC KEY
+            data_encrypted = encryption.Encryption.asymm_encrypt_data(receivers_key_address, data)
+            data_sig_encrypted = encryption.Encryption.encrypt_signature(receivers_key_address, data_sig)
 
-        # Asymmetrically encrypt the data and signature using the RECEIVER'S PUBLIC KEY
-        #data_encrypted = encryption.Encryption.asymm_encrypt_data(receivers_key_address, data)
-        #data_sig_encrypted = encryption.Encryption.encrypt_signature(receivers_key_address, data_sig)
+            # Delete the plaintext versions of the data and signature
+            data = None
+            data_sig = None
 
-        # Delete the plaintext versions of the data and signature
-        #data = None
-        #data_sig = None
+            # --->
+            # THE ENCRYPTED & SIGNED DATA IS SENT "PUBLICLY"
+            # --->
 
-        # --->
-        # THE ENCRYPTED & SIGNED DATA IS SENT "PUBLICLY"
-        # --->
+            # Decrypt the command and signature using the RECEIVER'S PRIVATE KEY
+            data = encryption.Encryption.asymm_decrypt_data(receivers_key_address, data_encrypted)
+            data_sig = encryption.Encryption.decrypt_signature(receivers_key_address, data_sig_encrypted)
 
-        # Decrypt the command and signature using the RECEIVER'S PRIVATE KEY
-        #data = encryption.Encryption.asymm_decrypt_data(receivers_key_address, data_encrypted)        
-        #data_sig = encryption.Encryption.decrypt_signature(receivers_key_address, data_sig_encrypted)
+            # Check the signature against the SENDER'S PUBLIC KEY
+            stdout = encryption.Encryption.verify_signature(senders_key_address, data, data_sig)
+
+            # If the signature is invalid do not run the command
+            if b"Verify signature failed" in stdout:
+                print("damn....")
+                return None
 
         # Save this meesage and its signature in the class, incase it needs to be used for a TPM policy authorization
         self.last_message = data
         self.last_message_signature = data_sig
-        
-        # Check the signature against the SENDER'S PUBLIC KEY
-        stdout = encryption.Encryption.verify_signature(senders_key_address, data, data_sig)
-
-        # If the signature is invalid do not run the command
-        if b"Verify signature failed" in stdout:
-            print("damn....")
-            return None
+        #self.last_message_signature = b"Signed by yours truly"
         
         return data
