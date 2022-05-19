@@ -2,7 +2,6 @@ import os
 import random
 import string
 
-import rfid
 import utils
 
 class Encryption:
@@ -67,7 +66,6 @@ class Encryption:
 
         return True
         
-
     # Encrypts the file system and stores it in the ramdisk
     def encrypt(rfid_passcode, fingerprint_message, fingerprint_message_signature):
         aes_key = Encryption.unseal_key(rfid_passcode, fingerprint_message, fingerprint_message_signature)
@@ -125,8 +123,6 @@ class Encryption:
         return stdout
 
     def create_signature(key_addr, data):
-        data = Encryption.add_policy_header(data)
-
         # Create temporary data file
         Encryption.create_temporary_file("data", data)
 
@@ -140,8 +136,6 @@ class Encryption:
         return stdout
 
     def verify_signature(key_addr, data, signature):
-        data = Encryption.add_policy_header(data)
-
         # Create temporary data and signature files
         Encryption.create_temporary_file("data", data)
         Encryption.create_temporary_file("signature", signature)
@@ -181,9 +175,3 @@ class Encryption:
     # Remove the temporary file
     def delete_temporary_file(name):
         os.remove(Encryption.get_temporary_file_path(name))
-
-    # Pad the start of data with 4 null bytes
-    # This is necessary for the policy signed authentication
-    def add_policy_header(data):
-        return data
-        #return bytes.fromhex("00000000") + b" " + data
