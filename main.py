@@ -178,7 +178,7 @@ class Main:
 
     # Reset the device to a new blank state
     def reset(self):       
-        self.display.draw_message("Resetting..")
+        self.display.draw_message("Resetting...")
 
         # Remove any existing USB drives before resetting (this forces the host to eject)
         storage.remove_usb_gadget()

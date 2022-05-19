@@ -155,7 +155,6 @@ class Encryption:
         Encryption.delete_temporary_file("signature")
 
         return stdout
-        #return "this is a fake signature"
 
     def encrypt_signature(key_addr, signature):
         part_1 = Encryption.asymm_encrypt_data(key_addr, signature[:len(signature)//2])

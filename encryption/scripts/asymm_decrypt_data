@@ -13,5 +13,5 @@ keyaddress=$1
 # Data to be decrypted asymmetrically
 ciphertext=$2
 
-# Decrypt the data, using the public key stored in the specified persistent address in the TPM
+# Decrypt the data, using the private key stored in the specified persistent address in the TPM
 tpm2_rsadecrypt -c $keyaddress $ciphertext

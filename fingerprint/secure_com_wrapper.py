@@ -62,9 +62,8 @@ class ComSecure(fingerprint.bep.communication.Com):
                 print("damn....")
                 return None
 
-        # Save this meesage and its signature in the class, incase it needs to be used for a TPM policy authorization
+        # Save this message and its signature in the class, incase it needs to be used for a TPM policy authorization
         self.last_message = data
         self.last_message_signature = data_sig
-        #self.last_message_signature = b"Signed by yours truly"
         
         return data
