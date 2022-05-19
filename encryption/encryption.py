@@ -23,6 +23,15 @@ class Encryption:
         Encryption.delete_temporary_file("message")
         Encryption.delete_temporary_file("signature")
 
+        return True
+
+    # Creates a new AES key and then encrypts the drive with it
+    def encrypt_new(rfid_passcode, fingerprint_message, fingerprint_message_signature):
+        Encryption.generate_and_seal_key(rfid_passcode, fingerprint_message, fingerprint_message_signature)
+        result = Encryption.encrypt(rfid_passcode, fingerprint_message, fingerprint_message_signature)
+
+        return result
+
     # Generates a new passcode to be stored on the RFID card
     def generate_card_passcode():
         # The passcode may consist of any letters, numbers and punctuation characters
@@ -65,7 +74,7 @@ class Encryption:
             return False
 
         return True
-        
+
     # Encrypts the file system and stores it in the ramdisk
     def encrypt(rfid_passcode, fingerprint_message, fingerprint_message_signature):
         aes_key = Encryption.unseal_key(rfid_passcode, fingerprint_message, fingerprint_message_signature)
